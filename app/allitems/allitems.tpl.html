@@ -1,0 +1,23 @@
+<div>
+  <h1 style="text-align:left">All Items</h1>
+  <div class="alert alert-success" role="alert" ng-show="pendingItems">There are {{pendingItems}} item(s) awaiting blockchain confirmation before being listed.</div>
+  <p class="lead" ng-if="items.length == 0">No active items found</p>
+  <table ng-if="items.length > 0" class="table table-hover table-striped">
+    <thead>
+    <tr>
+      <th>Item Name</th>
+      <th>Category</th>
+      <th>Quantity available</th>
+      <th>Price</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr class="item-row" ng-repeat="item in items">
+      <td><a href="#/item/{{ item.id }}">{{ item.title }}</a></td>
+      <td>{{ item.category }}</td>
+      <td>{{ item.quantity }}</td>
+      <td>{{ item.price }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
