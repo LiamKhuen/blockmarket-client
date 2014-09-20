@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Bootstrap core CSS -->
-  <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
 
   <link rel="stylesheet" href="css/app.css"/>
 
@@ -26,12 +26,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
+
+      <img class="syslogo" src="assets/images/syslogo.png" />
       <a class="navbar-brand" href="#">Blockmarket</a>
+
     </div>
+
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
-        <li ng-class="{scope.homeActive: active}"><a href="#/">Featured Items</a></li>
-        <li ng-class="{scope.itemDetailActive: active}"><a href="#/items">All Items</a></li>
+        <li ng-class="{active: activeView == 'home'}"><a href="#/featured">Featured Items</a></li>
+        <li ng-class="{active: activeView == 'items'}"><a href="#/items">All Items</a></li>
       </ul>
     </div><!--/.nav-collapse -->
   </div>

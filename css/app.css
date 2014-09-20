@@ -3,6 +3,27 @@
     margin: 0;
 }
 
+body {
+    background-color: white;
+}
+
 .content {
     padding-top:70px;
+    background-color: #FFFFFF;
 }
+
+.content h1 {
+    color: #666666;
+}
+
+.content p {
+    color: #999999;
+}
+
+.syslogo {
+    height: 40px;
+    width: 46px;
+    float:left;
+    margin: 4px 5px 0px 5px;
+}
+

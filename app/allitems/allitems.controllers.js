@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('blockmarket.allitems.controllers', [])
-    .controller('AllItemsCtrl', ['$scope', '$route', function ($scope, $route) {
-        $scope.homeActive = true; //sets the style for nav
+    .controller('AllItemsCtrl', ['$rootScope', '$scope', '$route', function ($rootScope, $scope, $route) {
+        $rootScope.activeView = 'items'; //sets the style for nav
 
 
     }]);
