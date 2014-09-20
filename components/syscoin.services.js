@@ -1,11 +1,11 @@
-angular.module('syscoin.services', [])
-    .factory('syscoinService', ['$http', '$q', function($http, $q) {
+angular.module('syscoin.services', ['blockmarket.appconfig'])
+    .factory('syscoinService', ['$http', '$q', 'HOST', function($http, $q, HOST) {
 
         function offerNew( category, title, quantity, price, description ) {
             console.log("offerNew(" + category + ", " + title + ", " + quantity + ", " + price + ", " + description + ")");
             var request = $http({
                 method: "post",
-                url: serviceUrl + "/rpc/offernew",
+                url: HOST + "/rpc/offernew",
                 params: {
                     category: category,
                     title: title,
@@ -22,7 +22,7 @@ angular.module('syscoin.services', [])
             console.log("listTransactions()");
             var request = $http({
                 method: "post",
-                url: serviceUrl + "/rpc/listtransactions",
+                url: HOST + "/rpc/listtransactions",
                 params: {
                 }
             });
@@ -34,7 +34,7 @@ angular.module('syscoin.services', [])
             console.log("offerList()");
             var request = $http({
                 method: "post",
-                url: serviceUrl + "/rpc/offerlist",
+                url: HOST + "/rpc/offerlist",
                 params: {
                 }
             });
@@ -46,7 +46,7 @@ angular.module('syscoin.services', [])
             console.log("certissuerList()");
             var request = $http({
                 method: "post",
-                url: serviceUrl + "/rpc/certissuerList",
+                url: HOST + "/rpc/certissuerList",
                 params: {
                 }
             });
@@ -58,7 +58,7 @@ angular.module('syscoin.services', [])
             console.log("aliasList()");
             var request = $http({
                 method: "post",
-                url: serviceUrl + "/rpc/aliaslist",
+                url: HOST + "/rpc/aliaslist",
                 params: {
                 }
             });
@@ -69,10 +69,10 @@ angular.module('syscoin.services', [])
         function offerInfo(guid) {
             console.log("getItem( " + guid + ")");
             var request = $http({
-                method: "post",
-                url: serviceUrl + "/rpc/offerinfo",
+                method: "POST",
+                url: HOST + "/rpc/offerinfo",
                 params: {
-                    guid: guid
+                    offerGuid: guid
                 }
             });
 
@@ -83,7 +83,7 @@ angular.module('syscoin.services', [])
             console.log("getRawTransaction( " + txid + ")");
             var request = $http({
                 method: "post",
-                url: serviceUrl + "/api/getrawtransaction",
+                url: HOST + "/api/getrawtransaction",
                 params: {
                     guid: txid
                 }
@@ -96,7 +96,7 @@ angular.module('syscoin.services', [])
             console.log("decodeRawTransaction( " + rawtx + ")");
             var request = $http({
                 method: "post",
-                url: serviceUrl + "/api/decoderawtransaction",
+                url: HOST + "/api/decoderawtransaction",
                 params: {
                     guid: txid
                 }
