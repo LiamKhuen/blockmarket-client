@@ -6,7 +6,9 @@ var app = angular.module('blockmarket', [
     'blockmarket.home.controllers',
     'blockmarket.allitems.controllers',
     'blockmarket.itemdetail.controllers',
-    'syscoin.services'
+    'syscoin.services',
+    'blockmarket.common.directives',
+    'blockmarket.services'
 ])
 .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', { controller:'HomeCtrl', templateUrl:'app/home/home.tpl.html'});
@@ -14,14 +16,3 @@ var app = angular.module('blockmarket', [
     $routeProvider.when('/item/:guid', { controller:'ItemDetailCtrl', templateUrl:'app/itemdetail/itemdetail.tpl.html'});
     $routeProvider.otherwise({ redirectTo:'/' });
 }]);
-
-var app = angular.module('myapp', []);
-
-app.directive('myHolder', function() {
-    return {
-        link: function(scope, element, attrs) {
-            attrs.$set('data-src', attrs.myHolder);
-            Holder.run({images:element.get(0), nocss:true});
-        }
-    };
-});

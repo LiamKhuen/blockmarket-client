@@ -67,11 +67,11 @@ angular.module('syscoin.services', ['blockmarket.appconfig'])
         }
 
         function offerInfo(guid) {
-            console.log("getItem( " + guid + ")");
+            console.log("offerInfo( " + guid + ")");
             var request = $http({
                 method: "POST",
                 url: HOST + "/rpc/offerinfo",
-                params: {
+                data: {
                     offerGuid: guid
                 }
             });

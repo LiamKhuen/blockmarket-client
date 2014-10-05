@@ -1,5 +1,5 @@
 'use strict';
-angular.module('blockmarket.home.controllers', ['syscoin.services', 'blockmarket.marketconfig'])
+angular.module('blockmarket.home.controllers', ['syscoin.services', 'blockmarket.marketconfig', 'blockmarket.common.directives'])
     .controller('HomeCtrl', ['$rootScope', '$scope', '$route', 'syscoinService', 'FEATURED_ITEMS', function ($rootScope, $scope, $route, syscoinService, FEATURED_ITEMS) {
         $rootScope.activeView = 'home'; //sets the style for nav
 
