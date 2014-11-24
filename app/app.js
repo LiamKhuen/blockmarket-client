@@ -17,4 +17,5 @@ var app = angular.module('blockmarket', [
     $routeProvider.otherwise({ redirectTo:'/' });
 
     $httpProvider.defaults.useXDomain = true;
+    $httpProvider.defaults.withCredentials = true;
 }]);
