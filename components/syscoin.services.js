@@ -9,7 +9,6 @@ angular.module('syscoin.services', ['blockmarket.appconfig'])
             console.log("getInfo()");
             var request = $http({
                 method: "post",
-                withCredentials: true,
                 url: rpcUrl,
                 data: {
                     "method":"getinfo"

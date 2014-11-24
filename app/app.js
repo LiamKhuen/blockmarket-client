@@ -15,7 +15,4 @@ var app = angular.module('blockmarket', [
     $routeProvider.when('/items', { controller:'AllItemsCtrl', templateUrl:'app/allitems/allitems.tpl.html'});
     $routeProvider.when('/item/:guid', { controller:'ItemDetailCtrl', templateUrl:'app/itemdetail/itemdetail.tpl.html'});
     $routeProvider.otherwise({ redirectTo:'/' });
-
-    $httpProvider.defaults.useXDomain = true;
-    $httpProvider.defaults.withCredentials = true;
 }]);
