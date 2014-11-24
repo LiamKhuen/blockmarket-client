@@ -6,7 +6,7 @@ angular.module('blockmarket.allitems.controllers', ['syscoin.services'])
 
         //TODO: refactor to us a .all() request
         //fetch all items
-        var request = syscoinService.offerList();
+        /*var request = syscoinService.offerList();
         request.then(function(response) {
             console.log("offerList:", response);
             //iterate over all of the offers and get the full data
@@ -31,5 +31,8 @@ angular.module('blockmarket.allitems.controllers', ['syscoin.services'])
                         }
                     });
                 }}
-        });
+        }); */
+
+        //dummy call to syscoin service for now
+        var request = syscoinService.getInfo();
     }]);
