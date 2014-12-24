@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('blockmarket.allitems.controllers', ['syscoin.services'])
-    .controller('AllItemsCtrl', ['$rootScope', '$scope', '$route', 'syscoinService', function ($rootScope, $scope, $route, syscoinService) {
+    .controller('AllItemsCtrl', ['$rootScope', '$scope', '$route', 'syscoinService', 'syscoinService2', function ($rootScope, $scope, $route, syscoinService, syscoinService2) {
         $rootScope.activeView = 'items'; //sets the style for nav
 
         //TODO: refactor to us a .all() request
@@ -34,5 +34,9 @@ angular.module('blockmarket.allitems.controllers', ['syscoin.services'])
         }); */
 
         //dummy call to syscoin service for now
-        var request = syscoinService.getInfo();
+       // var request = syscoinService.getInfo();
+
+        syscoinService2.getInfo({}, {headers: {'X-ACL': 'x@y.z'}}).
+            success(function(data) { console.log("success on getinfo!", data); }).
+            error(function(error) { console.log("error on getinfo!", error); });
     }]);
