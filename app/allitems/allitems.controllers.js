@@ -34,10 +34,14 @@ angular.module('blockmarket.allitems.controllers', ['syscoin.services'])
         }); */
 
         //dummy call to syscoin service for now
-        var request = syscoinService.getInfo();
+        /*var request = syscoinService.getInfo();
         request.then(function(response) {
             console.log("got info!");
-        });
+        });*/
+
+        //var request2 = syscoinService.offerList();
+
+        var request3 = syscoinService.offerInfo('9185ba59f2500359');
 
        /* syscoinService2.getInfo({}, {headers: {}}).
             success(function(data) { console.log("success on getinfo!", data); }).

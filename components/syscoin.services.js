@@ -16,7 +16,7 @@ angular.module('syscoin.services', ['blockmarket.appconfig'])
                 method: "post",
                 url: rpcUrl,
                 data: {
-                    "method" : "getinfo"
+                    "method":"getinfo"
                 },
                 params: {}
             });
@@ -24,11 +24,14 @@ angular.module('syscoin.services', ['blockmarket.appconfig'])
             return( request );
         }
 
-        /*function offerNew( category, title, quantity, price, description ) {
+        function offerNew( category, title, quantity, price, description ) {
             console.log("offerNew(" + category + ", " + title + ", " + quantity + ", " + price + ", " + description + ")");
             var request = $http({
                 method: "post",
-                url: HOST + "/rpc/offernew",
+                url: rpcUrl,
+                data: {
+                    "method":"offernew"
+                },
                 params: {
                     category: category,
                     title: title,
@@ -45,9 +48,11 @@ angular.module('syscoin.services', ['blockmarket.appconfig'])
             console.log("listTransactions()");
             var request = $http({
                 method: "post",
-                url: HOST + "/rpc/listtransactions",
-                params: {
-                }
+                url: rpcUrl,
+                data: {
+                    "method" : "listtransactions"
+                },
+                params: {}
             });
 
             return( request );
@@ -55,16 +60,12 @@ angular.module('syscoin.services', ['blockmarket.appconfig'])
 
         function offerList() {
             console.log("offerList()");
-            var authdata = Base64.encode(RPC_CONFIG.USERNAME + ':' + RPC_CONFIG.PASSWORD);
-            $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
 
             var request = $http({
                 method: "post",
-                withCredentials: true,
-
                 url: rpcUrl,
                 data: {
-                    "method":"getinfo"
+                    "method":"offerlist"
                 }
             });
 
@@ -75,9 +76,11 @@ angular.module('syscoin.services', ['blockmarket.appconfig'])
             console.log("certissuerList()");
             var request = $http({
                 method: "post",
-                url: HOST + "/rpc/certissuerList",
-                params: {
-                }
+                url: rpcUrl,
+                data: {
+                    "method":"getinfo"
+                },
+                params: {}
             });
 
             return( request );
@@ -87,9 +90,11 @@ angular.module('syscoin.services', ['blockmarket.appconfig'])
             console.log("aliasList()");
             var request = $http({
                 method: "post",
-                url: HOST + "/rpc/aliaslist",
-                params: {
-                }
+                url: rpcUrl,
+                data: {
+                    "method":"aliaslist"
+                },
+                params: {}
             });
 
             return( request );
@@ -98,10 +103,17 @@ angular.module('syscoin.services', ['blockmarket.appconfig'])
         function offerInfo(guid) {
             console.log("offerInfo( " + guid + ")");
             var request = $http({
-                method: "POST",
-                url: rpcUrl + "offerinfo.json",
+                method: "post",
+                url: rpcUrl,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function(obj) {
+                    var str = [];
+                    for(var p in obj)
+                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                    return str.join("&");
+                },
                 data: {
-                    offerGuid: guid
+                    "method":"offerinfo"
                 }
             });
 
@@ -112,9 +124,13 @@ angular.module('syscoin.services', ['blockmarket.appconfig'])
             console.log("getRawTransaction( " + txid + ")");
             var request = $http({
                 method: "post",
-                url: HOST + "/api/getrawtransaction",
+                url: rpcUrl,
+                data: {
+                    "method":"getrawtransaction",
+                    "guid": txid
+                },
                 params: {
-                    guid: txid
+                    "guid": txid
                 }
             });
 
@@ -125,27 +141,30 @@ angular.module('syscoin.services', ['blockmarket.appconfig'])
             console.log("decodeRawTransaction( " + rawtx + ")");
             var request = $http({
                 method: "post",
-                url: HOST + "/api/decoderawtransaction",
+                url: rpcUrl,
+                data: {
+                    "method":"decoderawtransaction"
+                },
                 params: {
                     guid: txid
                 }
             });
 
             return( request );
-        } */
+        }
 
 
         // Return public API.
         return {
-            getInfo: getInfo
-            /*offerNew: offerNew,
+            getInfo: getInfo,
+            offerNew: offerNew,
             listTransactions: listTransactions,
             offerList: offerList,
             offerInfo: offerInfo,
             certissuerList: certissuerList,
             aliasList: aliasList,
             getRawTransaction: getRawTransaction,
-            decodeRawTransaction: decodeRawTransaction*/
+            decodeRawTransaction: decodeRawTransaction
         };
     }]).factory('Base64', function () {
         /* jshint ignore:start */
