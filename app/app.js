@@ -3,7 +3,6 @@
 // Declare app level module which depends on filters, and services
 var app = angular.module('blockmarket', [
     'ngRoute',
-    'syscoin.services',
     'blockmarket.home.controllers',
     'blockmarket.allitems.controllers',
     'blockmarket.itemdetail.controllers',

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('blockmarket.allitems.controllers', ['syscoin.services'])
+angular.module('blockmarket.allitems.controllers', ['syscoin'])
     .controller('AllItemsCtrl', ['$rootScope', '$scope', '$route', 'syscoinService', function ($rootScope, $scope, $route, syscoinService) {
         //$rootScope.activeView = 'items'; //sets the style for nav
 
