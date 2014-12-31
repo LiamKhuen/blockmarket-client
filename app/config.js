@@ -1,12 +1,7 @@
 'use strict';
 
 angular.module('blockmarket.appconfig', [])
-    .constant('RPC_CONFIG', {
-        HOST: '127.0.0.1',
-        PORT: '8336',
-        USERNAME: 'rpcuser',
-        PASSWORD: 'asdfkjdfhvkchbkhadkjwhekfbevsdbdcksjdhfksjkfklshfk'
-    });
+    .constant('HOST','http://localhost:8080');
 
 angular.module('blockmarket.marketconfig', [])
-    .constant('FEATURED_ITEMS',['e2c0556df9bd8bdb00']);
+    .constant('FEATURED_ITEMS',['8dd221eaa602f71a']);

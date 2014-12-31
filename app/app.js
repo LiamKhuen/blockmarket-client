@@ -9,10 +9,9 @@ var app = angular.module('blockmarket', [
     'blockmarket.common.directives',
     'blockmarket.services'
 ])
-.config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
+.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', { controller:'HomeCtrl', templateUrl:'app/home/home.tpl.html'});
     $routeProvider.when('/items', { controller:'AllItemsCtrl', templateUrl:'app/allitems/allitems.tpl.html'});
     $routeProvider.when('/item/:guid', { controller:'ItemDetailCtrl', templateUrl:'app/itemdetail/itemdetail.tpl.html'});
     $routeProvider.otherwise({ redirectTo:'/' });
-
 }]);

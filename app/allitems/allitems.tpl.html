@@ -1,22 +1,28 @@
 <div>
- <!-- <h1 style="text-align:left">All Items</h1>
+  <!--<h1 style="text-align:left">All Items</h1>-->
   <div class="alert alert-success" role="alert" ng-show="pendingItems">There are {{pendingItems}} item(s) awaiting blockchain confirmation before being listed.</div>
   <p class="lead" ng-if="items.length == 0">No active items found</p>
-  <table ng-if="items.length > 0" class="table table-hover table-striped">
-    <thead>
-    <tr>
-      <th>Item Name</th>
-      <th>Category</th>
-      <th>Quantity available</th>
-      <th>Price</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr class="item-row" ng-repeat="item in items">
-      <td><a href="#/item/{{ item.id }}">{{ item.title }}</a></td>
-      <td>{{ item.category }}</td>
-      <td>{{ item.quantity }}</td>
-      <td>{{ item.price }}</td>
-    </tr>
-    </tbody-->
+  <div class="col-sm-4 col-md-3 hidden-xs">
+  <ul class="nav nav-list" id="filter">
+  <li class="nav-header">Categories</li>
+  <li><a class="filter" data-filter=".cat-12">All Categories</a></li>
+  <li><a class="filter" data-filter=".cat-12">Clothing</a></li>
+  <li><a class="filter" data-filter=".cat-12">Gadgets</a></li>
+  </ul>
+  </div>
+ <div class="col-xs-12 col-sm-8 col-md-9">
+<div class="row" >
+    <div class="col-sm-6 col-md-4" ng-repeat="item in items">
+      <div class="thumbnail">
+        <img src="holder.js/300x161" holder-fix>
+        <div class="caption">
+          <h3>{{ item.title }}</h3>
+          <div class="descBox" id="dot1">
+          {{ item.description }}
+          </div>
+          <p><a href="#" class="btn btn-orange" role="button">Buy Now</a> <a href="#" class="btn btn-blue" role="button">More Info</a></p>
+        </div>
+      </div>
+      </div>
+    </div>
 </div>
