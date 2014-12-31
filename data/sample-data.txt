@@ -1,0 +1,11 @@
+syscoind offernew ScJ7jCBarnyvECrcFJJtejpEMH47joCNAn "['Clothing']" "Syscoin Logo T-Shirt" 5 100 "{'description':'The coolest t shirt ever', 'images':['https://pbs.twimg.com/media/BpowUWVCcAAeKlB.png'], 'EIN': null, 'UPC': null, 'website': 'http://syscoin.org'}"
+
+syscoind offernew ScJ7jCBarnyvECrcFJJtejpEMH47joCNAn "['Accessories']" "Syscoin Hard Wallet" 1000 100 "{'description':'Keep your Syscoin safe off the interwebs and on this hard wallet.', 'images':['https://pbs.twimg.com/media/Bpsf8JsIIAAMDlX.jpg'], 'EIN': null, 'UPC': null, 'website': 'http://syscoin.org'}"
+
+syscoind offernew ScJ7jCBarnyvECrcFJJtejpEMH47joCNAn "['Accessories','USB']" "Syscoin USB Wallet" 5 100 "{'description':'A USB stick to keep your Syscoin safe on. Capacity 32MB.', 'images':['https://pbs.twimg.com/media/BxFNgvcIgAAccXR.jpg'], 'EIN': null, 'UPC': null, 'website': 'http://syscoin.org'}"
+
+syscoind offernew ScJ7jCBarnyvECrcFJJtejpEMH47joCNAn "['Accessories', 'Gaming']" "Syscoin Poker Chips" 5 10 "{'description':'Represent Syscoin at your next Poker game! Regulation weight, high-quality chips provided by cryptochips.net.', 'images':['http://cryptochips.net/images/allchipsagain.png'], 'EIN': null, 'UPC': null, 'website': 'http://syscoin.org'}"
+
+syscoind offernew ScJ7jCBarnyvECrcFJJtejpEMH47joCNAn "['Accessories', 'Mobile']" "Syscoin Phone Case" 5 100 "{'description':'Wrap your phone in the most stylish case ever. Fits Android and Apple phones- please specify model in message to seller.', 'images':['http://freeimghosting.co.uk/images/yjm1akkh3hw39tq062mm.jpg'], 'EIN': null, 'UPC': null, 'website': 'http://syscoin.org'}"
+
+syscoind offernew ScJ7jCBarnyvECrcFJJtejpEMH47joCNAn "['Accessories', 'Mobile']" "Syscoin Tablet Case" 5 100 "{'description':'Tablets can look cool too with their own Syscoin case. Fits Android and Apple tablets- please specify model in message to seller.', 'images':['http://freeimghosting.co.uk/images/yjm1akkh3hw39tq062mm.jpg'], 'EIN': null, 'UPC': null, 'website': 'http://syscoin.org'}"
