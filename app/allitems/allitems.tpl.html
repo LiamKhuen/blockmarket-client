@@ -16,14 +16,14 @@
       <div class="thumb">
 
         <span ng-switch="item.description.images.length">
-          <img ng-switch-when="0" src="holder.js/300x161" holder-fix>
-          <img ng-switch-when="1" src="{{ item.description.images[0] }}">
+          <img ng-switch-when="0" ng-src="holder.js/300x161" holder-fix>
+          <img ng-switch-when="1" ng-src="{{ item.description.images[0] }}">
         </span>
 
         <div class="caption">
           <h3>{{ item.title }}</h3>
           <div class="descBox" id="dot1">
-          {{ item.description }}
+          {{ item.description.description }}
           </div>
           <p><a href="#" class="btn btn-orange" role="button">Buy Now</a> <a href="#" class="btn btn-blue" role="button">More Info</a></p>
         </div>

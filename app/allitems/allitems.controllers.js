@@ -4,7 +4,8 @@ angular.module('blockmarket.allitems.controllers', ['blockmarket.services', 'sys
     .controller('AllItemsCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', 'syscoinService', function ($rootScope, $scope, $q, blockmarketService, syscoinService) {
         $rootScope.activeView = 'items'; //sets the style for nav
 
+        $scope.items = blockmarketService.allItems;
         blockmarketService.getItems();
 
-        $scope.items = blockmarketService.allItems;
+
     }]);

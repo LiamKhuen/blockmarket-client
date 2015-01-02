@@ -3,14 +3,12 @@
 angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.marketconfig', 'syscoin'])
     .factory('blockmarketService', ['$http', '$q', 'HOST', 'FEATURED_ITEMS', 'syscoinService', function($http, $q, HOST, FEATURED_ITEMS, syscoinService) {
 
-        var allItems = new Array();
+        var allItems = [];
         var categories = [];
 
         //returns request objects to get all the featured items
         function getFeaturedItems() {
             //iterate over all featured items and get the full data
-            var items = new Array();
-            var totalItems = 0;
             var requests = new Array();
             var request;
             for(var i = 0; i < FEATURED_ITEMS.length; i++) {
@@ -21,26 +19,35 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             return requests;
         }
 
-        //returns request object to get ALL the items in this marketplace
+        //returns requ est object to get ALL the items in this marketplace
         function getItems() {
-            var request = syscoinService.offerList();
-            var requests = new Array();
-            request.then(function(response) {
+            console.log("getItems");
+            //clear any existing items
+            //allItems = [];
+
+            var itemGuids = new Array();
+            syscoinService.offerList().then(function(response) {
                 //iterate over offers and get the full data of non expired offers
                 for(var i = 0; i < response.data.result.length; i++) {
-                    console.log('result[' + i + '].offer = ' +  response.data.result[i].name + ' ' + response.data.result[i].value);
-
                     //if the offer is not expired, add it to the queue to get full data on it
                     if (response.data.result[i].expired == undefined) {
-                        requests.push(syscoinService.offerInfo(response.data.result[i].name));
+                        console.log("Adding item: ", response.data.result[i]);
+                        itemGuids.push(response.data.result[i].name);
                     }
                 }
 
-                console.log("Total requests: " + requests.length);
+                console.log("Total items: " + itemGuids.length);
 
-                $q.all(requests).then(function(responses) {
-                    console.log("RESPONSESSSS:", responses);
-                    allItems = blockmarketService.parseItemResponses(responses);
+                var deferred = $q.defer();
+                var item;
+                angular.forEach(itemGuids, function(guid) {
+                    console.log('CALL');
+                    syscoinService.offerInfo(guid).then(function(response) {
+                        console.log('RESULT', response);
+                        item = response.data.result;
+                        item.description = JSON.parse(item.description);
+                        allItems.push(item);
+                    });
                 });
             });
         }
@@ -57,7 +64,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             for(var i = 0; i < responses.length; i++) {
                 if(responses[i].data.result) {
                     //only add confirmed items that aren't expired
-                    responses[i].data.result.description = angular.fromJson(responses[i].data.result.description);
+                    responses[i].data.result.description = JSON.parse(responses[i].data.result.description);
                     //console.log("Offer desc:", responses[i].data.result);
                     items.push(responses[i].data.result);
                 }
