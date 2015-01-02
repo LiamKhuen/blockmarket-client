@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('blockmarket.appconfig', [])
-    .constant('HOST','http://localhost:8080');
+    .constant("HOST","http://localhost:8080");
 
 angular.module('blockmarket.marketconfig', [])
-    .constant('FEATURED_ITEMS',['92d9ca1ed1821357', '163679cbd31cec37']);
+    .constant("FEATURED_ITEMS",["e21d8a8c70fba0bb00", "e4d87d37a9d35a9e00"]);

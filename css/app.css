@@ -63,6 +63,7 @@ body {
 
 .content {
     padding-top:70px;
+    padding-bottom: 70px;
     background-color: #FFFFFF;
 }
 
@@ -92,16 +93,20 @@ body {
 }
 
 
-.thumbnail {
+.featured-item {
 	background-color: #ffffff;
 	border: 2px solid #bdc3c7;
+    margin: 15px;
+    display: inline-block;
+    padding: 10px;
+    width: 320px;
+    vertical-align: top;
 }
 
 .caption h3 {
 	font-size:20px;
 	text-align:center;
 	margin-top: 5px;
-	margin-bottom: 10px;
 	color:#0695DF;
 	text-shadow:none;
 }
@@ -116,6 +121,15 @@ body {
 	background-color: #3598DB;
 }
 
-.thumbnail img {
-	height:
+.thumb {
+    text-align: center;
+    background-color: #FFFFFF;
+    height: 300px;
+    overflow: hidden;
+}
+
+.thumb img {
+    border: 2px solid #75c4e7;
+    width: 300px;
+    margin: -2px;
 }
