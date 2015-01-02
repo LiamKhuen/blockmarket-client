@@ -3,6 +3,9 @@
 angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.marketconfig', 'syscoin'])
     .factory('blockmarketService', ['$http', '$q', 'HOST', 'FEATURED_ITEMS', 'syscoinService', function($http, $q, HOST, FEATURED_ITEMS, syscoinService) {
 
+        var allItems = new Array();
+        var categories = [];
+
         //returns request objects to get all the featured items
         function getFeaturedItems() {
             //iterate over all featured items and get the full data
@@ -18,8 +21,37 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             return requests;
         }
 
-        //parses the featured items once asynchronously returned
-        function parseFeaturedItems(responses) {
+        //returns request object to get ALL the items in this marketplace
+        function getItems() {
+            var request = syscoinService.offerList();
+            var requests = new Array();
+            request.then(function(response) {
+                //iterate over offers and get the full data of non expired offers
+                for(var i = 0; i < response.data.result.length; i++) {
+                    console.log('result[' + i + '].offer = ' +  response.data.result[i].name + ' ' + response.data.result[i].value);
+
+                    //if the offer is not expired, add it to the queue to get full data on it
+                    if (response.data.result[i].expired == undefined) {
+                        requests.push(syscoinService.offerInfo(response.data.result[i].name));
+                    }
+                }
+
+                console.log("Total requests: " + requests.length);
+
+                $q.all(requests).then(function(responses) {
+                    console.log("RESPONSESSSS:", responses);
+                    allItems = blockmarketService.parseItemResponses(responses);
+                });
+            });
+        }
+
+        //get categories for the marketplaces based on the categories of the items
+        function getCategories() {
+            //stub
+        }
+
+        //parses the item responses once asynchronously returned
+        function parseItemResponses(responses) {
             var items = new Array();
             console.log("TOTAL RESULTS: " + responses.length);
             for(var i = 0; i < responses.length; i++) {
@@ -34,10 +66,12 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             return items;
         }
 
-
         // Return public API.
         return {
+            allItems: allItems,
+
             getFeaturedItems: getFeaturedItems,
-            parseFeaturedItems: parseFeaturedItems
+            getItems: getItems,
+            parseItemResponses: parseItemResponses
         };
     }]);

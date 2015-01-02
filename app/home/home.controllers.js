@@ -7,6 +7,6 @@ angular.module('blockmarket.home.controllers', ['blockmarket.common.directives',
         var requests = blockmarketService.getFeaturedItems();
 
         $q.all(requests).then(function(responses) {
-            $scope.items = blockmarketService.parseFeaturedItems(responses);
+            $scope.items = blockmarketService.parseItemResponses(responses);
         });
     }]);
