@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.marketconfig', 'syscoin'])
-    .service('blockmarketService', ['$http', '$q', 'HOST', 'FEATURED_ITEMS', 'syscoinService', function($http, $q, HOST, FEATURED_ITEMS, syscoinService) {
+    .service('blockmarketService', ['$http', '$timeout', '$q', 'HOST', 'FEATURED_ITEMS', 'syscoinService', function($http, $timeout, $q, HOST, FEATURED_ITEMS, syscoinService) {
 
         //public vars
         var allItems = [];
@@ -26,7 +26,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
         function getItems() {
             console.log("getItems");
             //clear any existing items
-            allItems = [];
+            //allItems = [];
             //featuredItems = [];
             currentItemGuidIndex = 0;
 
