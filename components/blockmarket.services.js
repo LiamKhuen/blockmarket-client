@@ -1,32 +1,36 @@
 'use strict';
 
 angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.marketconfig', 'syscoin'])
-    .factory('blockmarketService', ['$http', '$q', 'HOST', 'FEATURED_ITEMS', 'syscoinService', function($http, $q, HOST, FEATURED_ITEMS, syscoinService) {
+    .service('blockmarketService', ['$http', '$q', 'HOST', 'FEATURED_ITEMS', 'syscoinService', function($http, $q, HOST, FEATURED_ITEMS, syscoinService) {
 
+        //public vars
         var allItems = [];
+        var featuredItems = [];
         var categories = [];
+
+        var itemGuids = [];
+        var currentItemGuidIndex = 0;
+
 
         //returns request objects to get all the featured items
         function getFeaturedItems() {
             //iterate over all featured items and get the full data
-            var requests = new Array();
-            var request;
-            for(var i = 0; i < FEATURED_ITEMS.length; i++) {
-                request = syscoinService.offerInfo(FEATURED_ITEMS[i]);
-                requests.push(request);
-            }
+            //featuredItems = [];
+            currentItemGuidIndex = 0;
 
-            return requests;
+            itemGuids = FEATURED_ITEMS; //set to featured items to only fetch the featured subset
+            getItem(FEATURED_ITEMS[currentItemGuidIndex]);
         }
 
-        //returns requ est object to get ALL the items in this marketplace
+        //returns request object to get ALL the items in this marketplace
         function getItems() {
             console.log("getItems");
             //clear any existing items
-            //allItems = [];
+            allItems = [];
+            //featuredItems = [];
+            currentItemGuidIndex = 0;
 
-            var itemGuids = new Array();
-            syscoinService.offerList().then(function(response) {
+            return syscoinService.offerList().then(function(response) {
                 //iterate over offers and get the full data of non expired offers
                 for(var i = 0; i < response.data.result.length; i++) {
                     //if the offer is not expired, add it to the queue to get full data on it
@@ -38,23 +42,36 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
 
                 console.log("Total items: " + itemGuids.length);
 
-                var deferred = $q.defer();
-                var item;
-                angular.forEach(itemGuids, function(guid) {
-                    console.log('CALL');
-                    syscoinService.offerInfo(guid).then(function(response) {
-                        console.log('RESULT', response);
-                        item = response.data.result;
-                        item.description = JSON.parse(item.description);
-                        allItems.push(item);
-                    });
-                });
+                return getItem(itemGuids[currentItemGuidIndex]);
             });
         }
 
         //get categories for the marketplaces based on the categories of the items
         function getCategories() {
             //stub
+        }
+
+        function getItem(guid) {
+            var item;
+            syscoinService.offerInfo(guid).success(function(response) {
+                console.log('RESULT', response);
+                item = response.result;
+                item.description = JSON.parse(item.description);
+                allItems.push(item);
+
+                angular.forEach(FEATURED_ITEMS, function(itemGuid) {
+                    if(item.id === itemGuid) {
+                        featuredItems.push(item);
+                    }
+                });
+
+
+                //chain next call
+                if(currentItemGuidIndex < itemGuids.length-1) {
+                    currentItemGuidIndex++;
+                    getItem(itemGuids[currentItemGuidIndex]);
+                }
+            });
         }
 
         //parses the item responses once asynchronously returned
@@ -76,6 +93,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
         // Return public API.
         return {
             allItems: allItems,
+            featuredItems: featuredItems,
 
             getFeaturedItems: getFeaturedItems,
             getItems: getItems,
