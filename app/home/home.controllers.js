@@ -4,7 +4,7 @@ angular.module('blockmarket.home.controllers', ['blockmarket.common.directives',
     .controller('HomeCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', function ($rootScope, $scope, $q, blockmarketService) {
         $rootScope.activeView = 'home'; //sets the style for nav
 
-        var requests = blockmarketService.getFeaturedItems();
+        blockmarketService.getFeaturedItems();
 
-        $scope.items = blockmarketService.featuredItems;
+        $scope.items = blockmarketService.featuredItems();
     }]);

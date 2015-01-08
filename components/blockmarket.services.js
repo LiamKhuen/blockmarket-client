@@ -1,48 +1,76 @@
 'use strict';
 
 angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.marketconfig', 'syscoin'])
-    .service('blockmarketService', ['$http', '$timeout', '$q', 'HOST', 'FEATURED_ITEMS', 'syscoinService', function($http, $timeout, $q, HOST, FEATURED_ITEMS, syscoinService) {
+    .service('blockmarketService', ['$http', '$timeout', '$q', 'HOST', 'FEATURED_ITEMS', 'syscoinService', '$log', function($http, $timeout, $q, HOST, FEATURED_ITEMS, syscoinService, $log) {
 
         //public vars
-        var allItems = [];
-        var featuredItems = [];
-        var categories = [];
+        var _allItems = [];
+        var _featuredItems = [];
+        var _categories = [];
 
-        var itemGuids = [];
-        var currentItemGuidIndex = 0;
+        var _itemGuids = [];
 
+        this.featuredItems = function() {
+            return _featuredItems;
+        }
+
+        this.allItems = function() {
+            return _allItems;
+        }
 
         //returns request objects to get all the featured items
-        function getFeaturedItems() {
+        this.getFeaturedItems = function() {
             //iterate over all featured items and get the full data
-            //featuredItems = [];
-            currentItemGuidIndex = 0;
+            _featuredItems = [];
 
-            itemGuids = FEATURED_ITEMS; //set to featured items to only fetch the featured subset
-            getItem(FEATURED_ITEMS[currentItemGuidIndex]);
+            _itemGuids = FEATURED_ITEMS; //set to featured items to only fetch the featured subset
+
+
+            var _this = this;
+            var promises = [];
+            angular.forEach(FEATURED_ITEMS, function(itemGuid) {
+                promises.push(_this.getItem(itemGuid));
+            });
+
+            $q.all(promises).then(function(responses) {
+                for(var i = 0; i < responses.length; i ++) {
+                    $log.log("response in getFeatured: ", responses);
+                    _featuredItems.push(responses[i]);
+                }
+            });
         }
 
         //returns request object to get ALL the items in this marketplace
-        function getItems() {
+        this.getAllItems = function() {
             console.log("getItems");
             //clear any existing items
-            //allItems = [];
-            //featuredItems = [];
-            currentItemGuidIndex = 0;
+            _allItems = [];
+            _itemGuids = [];
 
-            return syscoinService.offerList().then(function(response) {
+            var _this = this;
+            syscoinService.offerList().then(function(response) {
                 //iterate over offers and get the full data of non expired offers
                 for(var i = 0; i < response.data.result.length; i++) {
                     //if the offer is not expired, add it to the queue to get full data on it
                     if (response.data.result[i].expired == undefined) {
                         console.log("Adding item: ", response.data.result[i]);
-                        itemGuids.push(response.data.result[i].name);
+                        _itemGuids.push(response.data.result[i].name);
                     }
                 }
 
-                console.log("Total items: " + itemGuids.length);
+                console.log("Total items: " + _itemGuids.length);
 
-                return getItem(itemGuids[currentItemGuidIndex]);
+                var promises = [];
+                angular.forEach(_itemGuids, function(itemGuid) {
+                    promises.push(_this.getItem(itemGuid));
+                });
+
+                $q.all(promises).then(function(responses) {
+                    for(var i = 0; i < responses.length; i ++) {
+                        $log.log("response in getItems: ", responses);
+                        _allItems.push(responses[i]);
+                    }
+                });
             });
         }
 
@@ -51,31 +79,22 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             //stub
         }
 
-        function getItem(guid) {
+        this.getItem = function(guid) {
             var item;
-            syscoinService.offerInfo(guid).success(function(response) {
+
+            var deferred = $q.defer();
+            syscoinService.offerInfo(guid).then(function(response) {
                 console.log('RESULT', response);
-                item = response.result;
+                item = response.data.result;
                 item.description = JSON.parse(item.description);
-                allItems.push(item);
-
-                angular.forEach(FEATURED_ITEMS, function(itemGuid) {
-                    if(item.id === itemGuid) {
-                        featuredItems.push(item);
-                    }
-                });
-
-
-                //chain next call
-                if(currentItemGuidIndex < itemGuids.length-1) {
-                    currentItemGuidIndex++;
-                    getItem(itemGuids[currentItemGuidIndex]);
-                }
+                deferred.resolve(item);
             });
+
+            return deferred.promise;
         }
 
         //parses the item responses once asynchronously returned
-        function parseItemResponses(responses) {
+        this.parseItemResponses = function(responses) {
             var items = new Array();
             console.log("TOTAL RESULTS: " + responses.length);
             for(var i = 0; i < responses.length; i++) {
@@ -90,13 +109,4 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             return items;
         }
 
-        // Return public API.
-        return {
-            allItems: allItems,
-            featuredItems: featuredItems,
-
-            getFeaturedItems: getFeaturedItems,
-            getItems: getItems,
-            parseItemResponses: parseItemResponses
-        };
     }]);
