@@ -111,6 +111,10 @@ body {
 	text-shadow:none;
 }
 
+.ng-binding {
+	height: 40px;
+}
+
 .btn-orange {
 	color: #ffffff;
 	background-color: #ff6600;
@@ -131,5 +135,123 @@ body {
 .thumb img {
     border: 2px solid #75c4e7;
     width: 300px;
+    height: 300px;
     margin: -2px;
+}
+
+/* ================= */
+/*  ALL Item Layout  */
+/* ================= */
+
+
+.category-side {
+	width: 20%;
+	float:left;
+}
+
+.all-items-border {
+	width: 80%;
+	float:right;
+}
+
+.descBox {
+	height: 60px;
+	overflow: hidden;
+	margin-bottom: 10px;
+	min-width:176px;
+}
+
+
+.all-item {
+	background-color: #ffffff;
+	border: 2px solid #bdc3c7;
+    margin: 15px;
+    display: inline-block;
+    padding: 10px;
+    width: 200px;
+    vertical-align: top;
+}
+
+.all-caption h3 {
+	font-size:16px;
+	text-align:center;
+	margin-top: 5px;
+	color:#0695DF;
+	text-shadow:none;
+	text-align:center;
+}
+
+.ng-binding {
+	height: 40px;
+}
+
+.btn {
+	margin-left:auto;
+	margin-right:auto;
+	display:block;
+}
+
+.all-thumb {
+    text-align: center;
+    background-color: #FFFFFF;
+    height: 150px;
+    overflow: hidden;
+}
+
+.all-thumb img {
+    border: 2px solid #75c4e7;
+    width: 180px;
+    height: 180px;
+    margin: -2px;
+}
+
+
+/* ================= */
+/*    Item Layout    */
+/* ================= */
+
+.item-img {
+	float:left;
+	
+	width: 342px;
+}
+
+.item-data {
+	float:right;
+	width: 570px;
+}
+
+.item-img img{
+	border: 2px solid #75c4e7;
+    width: 300px;
+    height: 300px;
+    margin: -2px;
+}
+
+.all-caption {
+	float:right;
+}
+
+.item-titles {
+	font-size:20px;
+	text-align:left;
+	margin-top: 1px;
+	color:#0695DF !important;
+	text-shadow:none;
+}
+
+.item-details {
+	min-height:244px;
+	text-align:left;
+}
+
+.item-btn {
+	min-height:20px;
+	margin-top:-5px;
+	width:100px;
+	
+}
+
+.btn-left {
+	float:left;
 }

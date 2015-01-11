@@ -1,13 +1,18 @@
-<div style="width: 50%;text-align:left;">
+<div style="width: 80%;text-align:left;">
   <h1>{{ item.title }}</h1>
-
+<div class="item-img">
   <span ng-switch="item.description.images.length">
     <img ng-switch-when="0" ng-src="holder.js/300x161" holder-fix>
     <img ng-switch-when="1" ng-src="{{ item.description.images[0] }}">
   </span>
-
-  <span>Quantity  <span class="badge">{{ item.quantity }}</span></span><br />
-  <span>Price  <span class="badge">{{ item.price }} SYS</span></span>
-  <p class="lead">{{ item.description.description}}</p>
-  <input id="buyItemBtn" type="submit" class="btn btn-primary" value="Buy Item" />
+</div>
+<div class="item-data">
+<div class="item-details">
+  <p class="item-titles">Quantity: <span class="label label-info">{{ item.quantity }}</span></p><br />
+  <p class="item-titles">Price: <span class="label label-info">{{ item.price }} SYS</span></p><br />
+  <p class="item-titles">Description: <p class="lead">{{ item.description.description}}</p></p>
+  </div>
+  <div class="item-btn">
+  <a href="syscoin-QT://{{ item.address }}&price={{ item.price }}" class="btn btn-info" role="button">Buy Item</a>
+  </div>
 </div>
