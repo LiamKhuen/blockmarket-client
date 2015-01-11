@@ -1,8 +1,13 @@
 <div style="width: 50%;text-align:left;">
   <h1>{{ item.title }}</h1>
-  <img>{{ item.description.image }}</img>
+
+  <span ng-switch="item.description.images.length">
+    <img ng-switch-when="0" ng-src="holder.js/300x161" holder-fix>
+    <img ng-switch-when="1" ng-src="{{ item.description.images[0] }}">
+  </span>
+
   <span>Quantity  <span class="badge">{{ item.quantity }}</span></span><br />
   <span>Price  <span class="badge">{{ item.price }} SYS</span></span>
-  <p class="lead">{{ item.description.text}}</p>
+  <p class="lead">{{ item.description.description}}</p>
   <input id="buyItemBtn" type="submit" class="btn btn-primary" value="Buy Item" />
 </div>

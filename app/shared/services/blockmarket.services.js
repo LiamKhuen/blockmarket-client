@@ -10,12 +10,17 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
 
         var _itemGuids = [];
 
+
         this.featuredItems = function() {
             return _featuredItems;
         }
 
         this.allItems = function() {
             return _allItems;
+        }
+
+        this.currentItem = function() {
+            return _currentItem;
         }
 
         //returns request objects to get all the featured items
