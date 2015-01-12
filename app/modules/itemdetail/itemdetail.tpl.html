@@ -1,5 +1,15 @@
-<div style="width: 80%;text-align:left;">
+<div style="width: 100%;text-align:left;">
   <h1>{{ item.title }}</h1>
+
+  <div class="category-side">
+  <ul class="nav nav-list" id="filter">
+  <li class="nav-header">Categories</li>
+  <li><a class="filter" data-filter=".cat-12">All Categories</a></li>
+  <li><a class="filter" data-filter=".cat-12">Clothing</a></li>
+  <li><a class="filter" data-filter=".cat-12">Gadgets</a></li>
+  </ul>
+  </div>
+    <div class="all-items-border">
 <div class="item-img">
   <span ng-switch="item.description.images.length">
     <img ng-switch-when="0" ng-src="holder.js/300x161" holder-fix>
@@ -13,6 +23,7 @@
   <p class="item-titles">Description: <p class="lead">{{ item.description.description}}</p></p>
   </div>
   <div class="item-btn">
-  <a href="syscoin-QT://{{ item.address }}&price={{ item.price }}" class="btn btn-info" role="button">Buy Item</a>
+  <a href="syscoin://{{ item.address }}&price={{ item.price }}" class="btn btn-info" role="button">Buy Item</a>
   </div>
+</div>
 </div>

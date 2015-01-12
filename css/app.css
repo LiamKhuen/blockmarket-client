@@ -82,6 +82,10 @@ body {
     margin: 4px 5px 0px 5px;
 }
 
+h1 {
+	margin-bottom:30px;
+}
+
 /* ================= */
 /*     Item Layout   */
 /* ================= */
@@ -249,7 +253,6 @@ body {
 	min-height:20px;
 	margin-top:-5px;
 	width:100px;
-	
 }
 
 .btn-left {
