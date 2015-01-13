@@ -7,4 +7,5 @@ angular.module('allitems.controllers', ['blockmarket.services', 'angular-syscoin
         blockmarketService.getAllItems();
 
         $scope.items = blockmarketService.allItems();
+        $scope.categories = blockmarketService.categories();
     }]);

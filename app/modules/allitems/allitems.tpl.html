@@ -1,14 +1,8 @@
 <div>
   <!--<h1 style="text-align:left">All Items</h1>-->
 
-  <div class="category-side">
-  <ul class="nav nav-list" id="filter">
-  <li class="nav-header">Categories</li>
-  <li><a class="filter" data-filter=".cat-12">All Categories</a></li>
-  <li><a class="filter" data-filter=".cat-12">Clothing</a></li>
-  <li><a class="filter" data-filter=".cat-12">Gadgets</a></li>
-  </ul>
-  </div>
+  <category-list categories="categories"></category-list>
+
   <div class="all-items-border">
   
     <div class="alert alert-success" role="alert" ng-show="pendingItems">There are {{pendingItems}} item(s) awaiting blockchain confirmation before being listed.</div>

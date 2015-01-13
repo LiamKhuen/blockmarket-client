@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('global.directives', [])
+angular.module('global.directives', ['blockmarket.services'])
     .directive('holderFix', function () {
         return {
             link: function (scope, element, attrs) {

@@ -7,7 +7,8 @@ var app = angular.module('blockmarket', [
     'allitems.controllers',
     'itemdetail.controllers',
     'global.directives',
-    'blockmarket.services'
+    'blockmarket.services',
+    'blockmarket.categorylist'
 ])
 .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', { controller:'HomeCtrl', templateUrl:'app/modules/home/home.tpl.html'});
