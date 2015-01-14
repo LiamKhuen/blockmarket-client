@@ -94,6 +94,16 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             });
         }
 
+        this.addItem = function (syscoinAddress, item) {
+            var deferred = $q.defer();
+
+            syscoinService.offerNew(syscoinAddress, JSON.stringify(item.category), item.title, item.quantity, item.price, JSON.stringify(item.description)).then(function(response){
+                $log.log("OfferNew result:", response);
+            });
+
+            return deferred.promise;
+        }
+
         this.getItem = function(guid) {
             var item;
 
