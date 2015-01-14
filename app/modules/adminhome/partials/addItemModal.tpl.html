@@ -1,3 +1,50 @@
-<div>
-  <!-- add item form stub -->
+<div modal="showModal" close="cancel()">
+  <div class="modal-header">
+    <h4>Add Item</h4>
+  </div>
+  <div class="modal-body">
+    <pre>form = {{user | json}}</pre>
+    <pre>master = {{master | json}}</pre>
+    <form novalidate class="simple-form">
+      <label for="itemName">Item Name</label>
+      <input type="text" ng-model="item.name" name="itemName" id="itemName" />
+      <br />
+      <label for="price">Price</label>
+      <input type="text" ng-model="item.price" name="price" id="price" />
+      <br />
+      <label for="quantity">Quantity</label>
+      <input type="text" ng-model="item.quantity" name="quantity" id="quantity" />
+      <br />
+      <label for="imageURL">Image URL</label>
+      <input type="text" ng-model="item.imageURL" name="imageURL" id="imageURL" />
+      <br />
+      <label for="ein">EIN</label>
+      <input type="text" ng-model="item.ein" name="ein" id="ein" />
+      <br />
+      <label for="upc">UPC</label>
+      <input type="text" ng-model="item.upc" name="upc" id="upc" />
+      <br />
+      <label for="website">Website</label>
+      <input type="text" ng-model="item.website" name="website" id="website" />
+      <br />
+      <label for="description">Description</label>
+      <textarea ng-model="item.description" name="website" id="description" rows="10" cols="20"></textarea>
+      <br />
+      <label for="location">Location:</label>
+      <input type="text" ng-model="item.location" name="location" id="location" />
+      <br />
+      <label for="deliveryTime">Delivery Time:</label>
+      <input type="text" ng-model="item.deliveryTime" name="deliveryTime" id="deliveryTime" />
+      <br />
+      <label for="shipMethod">Ship Method</label>
+      <input type="text" ng-model="item.shipMethod" name="shipMethod" id="shipMethod" />
+      <br />
+      <label for="condition">Condition:</label>
+      <input type="text" ng-model="item.condition" name="condition" id="condition" />
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success" ng-click="addItem(item)">Add Item</button>
+    <button class="btn" ng-click="cancel()">Cancel</button>
+  </div>
 </div>
