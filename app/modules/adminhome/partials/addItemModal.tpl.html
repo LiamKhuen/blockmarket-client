@@ -1,51 +1,81 @@
 <div modal="showModal" close="cancel()">
   <div class="modal-header">
-    <h4>Add Item</h4>
+    <h4>List a item</h4>
   </div>
   <div class="modal-body">
     <form novalidate class="simple-form">
-      <label for="itemName">Item Name</label>
-      <input type="text" ng-model="item.title" name="itemName" id="itemName" />
-      <br />
-      <label for="category">Category</label>
-      <input type="text" ng-model="item.category" name="category" id="category" />
-      <br />
-      <label for="price">Price</label>
-      <input type="text" ng-model="item.price" name="price" id="price" />
-      <br />
-      <label for="quantity">Quantity</label>
-      <input type="text" ng-model="item.quantity" name="quantity" id="quantity" />
-      <br />
-      <label for="imageURL">Image URL</label>
-      <input type="text" ng-model="item.imageURL" name="imageURL" id="imageURL" />
-      <br />
-      <label for="ein">EIN</label>
-      <input type="text" ng-model="item.ein" name="ein" id="ein" />
-      <br />
-      <label for="upc">UPC</label>
-      <input type="text" ng-model="item.upc" name="upc" id="upc" />
-      <br />
-      <label for="website">Website</label>
-      <input type="text" ng-model="item.website" name="website" id="website" />
-      <br />
-      <label for="description">Description</label>
-      <textarea ng-model="item.description" name="website" id="description" rows="10" cols="20"></textarea>
-      <br />
-      <label for="location">Location:</label>
-      <input type="text" ng-model="item.location" name="location" id="location" />
-      <br />
-      <label for="deliveryTime">Delivery Time:</label>
-      <input type="text" ng-model="item.deliveryTime" name="deliveryTime" id="deliveryTime" />
-      <br />
-      <label for="shipMethod">Ship Method</label>
-      <input type="text" ng-model="item.shipMethod" name="shipMethod" id="shipMethod" />
-      <br />
-      <label for="condition">Condition:</label>
-      <input type="text" ng-model="item.condition" name="condition" id="condition" />
-    </form>
+     <div class="form-group">
+        <label for="inputEmail">Item Name</label>
+        <input type="text" class="form-control" ng-model="item.title" name="itemName" id="itemName">
+    </div>
+    
+     <div class="form-group">
+        <label for="inputEmail">Category</label>
+        <input type="text" class="form-control" ng-model="item.title" name="itemName" id="category">
+    </div>
+    
+     <div class="form-group">
+        <label for="inputEmail">Price</label>
+        <div class="input-group">
+        <input type="text" class="form-control" ng-model="item.price" name="price" id="price" placeholder="10000">
+        <span class="input-group-addon">SYS</span>
+        </div>
+    </div>
+    
+     <div class="form-group">
+        <label for="inputEmail">Quantity</label>
+        <input type="text" class="form-control" ng-model="item.quantity" name="quantity" id="quantity">
+    </div>
+    
+     <div class="form-group">
+        <label for="inputEmail">Image URL</label>
+        <input type="text" class="form-control" ng-model="item.imageURL" name="imageURL" id="imageURL">
+    </div>
+    
+     <div class="form-group">
+        <label for="inputEmail">EIN <a href="">(What is this?)</a></label>
+        <input type="text" class="form-control" ng-model="item.ein" name="ein" id="ein">
+    </div>
+     
+     <div class="form-group">
+        <label for="inputEmail">UPC <a href="">(What is this?)</a></label>
+        <input type="text" class="form-control" ng-model="item.upc" name="upc" id="upc">
+    </div>
+        
+     <div class="form-group">
+        <label for="inputEmail">Website</label>
+        <input type="text" class="form-control" ng-model="item.website" name="website" id="website">
+    </div>
+        
+     <div class="form-group">
+        <label for="inputEmail">Description</label>
+       <textarea ng-model="item.description" class="form-control" name="website" id="description" rows="3"  placeholder="Description"></textarea>
+    </div>
+        
+     <div class="form-group">
+        <label for="inputEmail">Location</label>
+        <input type="text" class="form-control" ng-model="item.location" name="location" id="location">
+    </div>
+        
+     <div class="form-group">
+        <label for="inputEmail">Delivery Time</label>
+        <input type="text" class="form-control" ng-model="item.deliveryTime" name="deliveryTime" id="deliveryTime">
+    </div>
+        
+     <div class="form-group">
+        <label for="inputEmail">Shipping Method</label>
+        <input type="text" class="form-control" ng-model="item.shipMethod" name="shipMethod" id="shipMethod">
+    </div>
+        
+     <div class="form-group">
+        <label for="inputEmail">Condition</label>
+        <input type="text" class="form-control" ng-model="item.condition" name="condition" id="condition">
+    </div>   
+</form>
+
   </div>
   <div class="modal-footer">
-    <button class="btn btn-success" ng-click="addItem(item)">Add Item</button>
+    <button class="btn btn-success" ng-click="addItem(item)">Generate Item</button><br />
     <button class="btn" ng-click="cancel()">Cancel</button>
   </div>
 </div>
