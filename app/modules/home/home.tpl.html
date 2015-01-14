@@ -6,7 +6,7 @@
 
   <p>The Syscoin team is using our Blockmarket to sell some Syscoin goods and other things related to Syscoin- but you can easily setup your own to sell whatever you'd like!</p>
 
-  <div class="featured-item" ng-repeat="item in items">
+  <div class="featured-item" ng-repeat="item in items track by $index">
 
         <div class="thumb">
             <img ng-src='{{ item.description.images[0] }}' />

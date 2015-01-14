@@ -5,8 +5,9 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
 
         //public vars exposed via some public function
         var _allItems = [];
-        var _featuredItems = [];
         var _categories = [];
+        var _itemGuids = [];
+        var _featuredItems = [];
 
         //once the items have been fetched in full, simply reuse the cache rather than recalling
         //the daemon as items are unlikely to change mid-session and if they do, errors will be thrown
@@ -16,6 +17,11 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
 
         /* Simple accessor functions to allow outside access to properties while still using 2way binding */
         this.featuredItems = function() {
+            _featuredItems = [];
+            for(var i = 0; i < FEATURED_ITEMS.length; i++) {
+                _featuredItems.push(getCachedItem(FEATURED_ITEMS[i]));
+            }
+
             return _featuredItems;
         }
 
@@ -33,28 +39,8 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
         //returns request objects to get all the featured items
         this.getFeaturedItems = function() {
             //iterate over all featured items and get the full data
-            var itemGuidsToFetch = FEATURED_ITEMS;
             var itemGuids = FEATURED_ITEMS;
-
-            //cache items in the featured items array into the all items array and only request those
-            //that aren't featured
-            if(_cacheItems === true && _featuredItems.length > 0) {
-                $log.log("Item caching active." + itemGuidsToFetch.length + " items.");
-                for(var i = 0; i < itemGuids.length; i++) {
-                    var cachedFeaturedItem = containsItem(_featuredItems, itemGuids[i]);
-                    if(cachedFeaturedItem !== null) {
-                        $log.log("Got a featured item for the cache, for featured items!");
-
-                        //remove the itemGuid from those to be fetched
-                        itemGuidsToFetch.splice(i, 1);
-
-                        $log.log("Items remaining to be fetched:" + itemGuidsToFetch.length );
-                    }else{
-                        $log.log("Featured item NOT FOUND IN CACHE:" + itemGuidsToFetch[i], cachedFeaturedItem );
-                    }
-
-                }
-            }
+            var itemGuidsToFetch = FEATURED_ITEMS;
 
             var _this = this;
             var promises = [];
@@ -78,43 +64,25 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
 
             var _this = this;
             syscoinService.offerList().then(function(response) {
+
                 //iterate over offers and get the full data of non expired offers
                 for(var i = 0; i < response.data.result.length; i++) {
                     //if the offer is not expired, add it to the queue to get full data on it
                     if (response.data.result[i].expired == undefined) {
                         console.log("Adding item: ", response.data.result[i]);
                         itemGuids.push(response.data.result[i].name);
+                        _itemGuids.push(response.data.result[i].name);
+
                         itemGuidsToFetch.push(response.data.result[i].name);
                     }
                 }
 
                 console.log("Total items: " + itemGuids.length);
 
-                //cache items in the featured items array into the all items array and only request those
-                //that aren't featured
-                if(_cacheItems === true && _featuredItems.length > 0) {
-                    for(i = 0; i < itemGuids.length; i++) {
-                        if(containsItem(_allItems, itemGuidsToFetch[i]) === null) {
-                            var cachedFeaturedItem = containsItem(_featuredItems, itemGuidsToFetch[i]);
-
-                            //if the cached featured item is found, add it, and remove it from the items to be fetched
-                            if(cachedFeaturedItem !== null) {
-                                $log.log("Got a featured item for the cache, adding it to all items!");
-                                _allItems.push(cachedFeaturedItem);
-
-                                //remove the itemGuid from those to be fetched
-                                itemGuidsToFetch.splice(i, 1);
-                            }
-                        }
-                    }
-                }
-
-
-
                 var promises = [];
-                angular.forEach(itemGuidsToFetch, function(guid) {
-                    promises.push(_this.getItem(guid));
-                });
+                for(i = 0; i < itemGuidsToFetch.length; i++) {
+                    promises.push(_this.getItem(itemGuidsToFetch[i]));
+                }
 
                 $q.all(promises).then(function(responses) {
                     for(var i = 0; i < responses.length; i ++) {
@@ -136,8 +104,9 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             if(_cacheItems === true && _allItems.length > 0) {
                 var cachedItem = containsItem(_allItems, guid);
                 if(cachedItem !== null) { //item found
-                    $log.log("Got a regular item for the cache!");
+                    $log.log("Got a regular item from the cache!");
 
+                    //TODO refactor
                     if(containsCategory(_categories, cachedItem.category[0]) === null) {
                         $log.log("category added.");
                         _categories.push(cachedItem.category[0]);
@@ -155,9 +124,12 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
                     item = response.data.result;
                     item.description = JSON.parse(item.description);
                     item.category = JSON.parse(item.category);
+
                     $log.log("Item category: " + item.category[0]);
+
+                    //TODO refactor
                     if(containsCategory(_categories, item.category[0]) === null) {
-                        $log.log("category added.");
+                        $log.log("category added via other route.");
                         _categories.push(item.category[0]);
                     }
 
@@ -207,6 +179,16 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             for(var i = 0; i < collection.length; i++) {
                 if(collection[i] == category);
                     return collection[i];
+            }
+
+            return null;
+        }
+
+        function getCachedItem(guid) {
+            for(var i = 0; i < _allItems.length; i++ ) {
+                if(_allItems[i].id == guid) {
+                    return _allItems[i];
+                }
             }
 
             return null;

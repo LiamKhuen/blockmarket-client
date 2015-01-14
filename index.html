@@ -35,6 +35,10 @@
       <ul class="nav navbar-nav">
         <li ng-class="{active: activeView == 'home'}"><a href="#/featured">Featured Items</a></li>
         <li ng-class="{active: activeView == 'items'}"><a href="#/items">All Items</a></li>
+
+
+        <!-- protect this link somehow --->
+        <li ng-class="{active: activeView == 'admin'}"><a href="#/admin">Market Admin</a></li>
       </ul>
     </div><!--/.nav-collapse -->
   </div>
@@ -68,6 +72,8 @@
 	<script src="app/modules/allitems/allitems.controllers.js"></script>
 
 	<script src="app/modules/itemdetail/itemdetail.controllers.js"></script>
+
+  <script src="app/modules/adminhome/adminhome.controllers.js"></script>
 
 	<script src="app/shared/directives/global.directives.js"></script>
   <script src="app/shared/directives/categorylist/categorylist.directives.js"></script>
