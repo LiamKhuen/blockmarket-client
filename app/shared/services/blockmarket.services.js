@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.marketconfig', 'angular-syscoin'])
-    .service('blockmarketService', ['$http', '$timeout', '$q', 'HOST', 'FEATURED_ITEMS', 'syscoinService', '$log', function($http, $timeout, $q, HOST, FEATURED_ITEMS, syscoinService, $log) {
+    .factory('blockmarketService', ['$http', '$timeout', '$q', 'HOST', 'FEATURED_ITEMS', 'syscoinService', '$log', function($http, $timeout, $q, HOST, FEATURED_ITEMS, syscoinService, $log) {
 
         //public vars exposed via some public function
         var _allItems = [];
@@ -14,87 +14,49 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
         //by the daemon
         var _cacheItems = true;
 
-
-        /* Simple accessor functions to allow outside access to properties while still using 2way binding */
-        this.featuredItems = function() {
-            _featuredItems = [];
-            for(var i = 0; i < FEATURED_ITEMS.length; i++) {
-                _featuredItems.push(getCachedItem(FEATURED_ITEMS[i]));
-            }
-
+        var getFeaturedItems = function() {
             return _featuredItems;
         }
 
-        this.allItems = function() {
-            return _allItems;
-        }
-
-        //get categories for the marketplaces based on the categories of the items
-        this.categories = function categories() {
-            return _categories;
-        }
-
-        /* End accessor functions **/
-
-        //returns request objects to get all the featured items
-        this.getFeaturedItems = function() {
-            //iterate over all featured items and get the full data
-            var itemGuids = FEATURED_ITEMS;
-            var itemGuidsToFetch = FEATURED_ITEMS;
-
-            var _this = this;
-            var promises = [];
-            angular.forEach(itemGuidsToFetch, function(itemGuid) {
-                promises.push(_this.getItem(itemGuid));
-            });
-
-            $q.all(promises).then(function(responses) {
-                for(var i = 0; i < responses.length; i ++) {
-                    $log.log("response in getFeatured: ", responses);
-                    _featuredItems.push(responses[i]);
-                }
-            });
-        }
-
         //returns request object to get ALL the items in this marketplace
-        this.getAllItems = function() {
+        var getAllItems = function() {
             console.log("getItems");
             var itemGuidsToFetch = [];
-            var itemGuids = [];
 
             var _this = this;
             syscoinService.offerList().then(function(response) {
-
+                _featuredItems = [];
                 //iterate over offers and get the full data of non expired offers
                 for(var i = 0; i < response.data.result.length; i++) {
                     //if the offer is not expired, add it to the queue to get full data on it
                     if (response.data.result[i].expired == undefined) {
-                        console.log("Adding item: ", response.data.result[i]);
-                        itemGuids.push(response.data.result[i].name);
+                        $log.log("Adding item: ", response.data.result[i]);
                         _itemGuids.push(response.data.result[i].name);
 
                         itemGuidsToFetch.push(response.data.result[i].name);
                     }
                 }
 
-                console.log("Total items: " + itemGuids.length);
+                console.log("Total items: " + itemGuidsToFetch.length);
 
-                var promises = [];
                 for(i = 0; i < itemGuidsToFetch.length; i++) {
-                    promises.push(_this.getItem(itemGuidsToFetch[i]));
+                    _this.getItem(itemGuidsToFetch[i]).then(function(item) {
+                        _allItems.push(item);
+
+                        //check to see if its featured
+                        for(var i = 0; i < FEATURED_ITEMS.length; i++) {
+                            if(FEATURED_ITEMS[i] == item.id) {
+                                $log.log("fetchin featurd " + item.id);
+                                _featuredItems.push(getCachedItem(FEATURED_ITEMS[i]));
+                            }
+                        }
+                    });
                 }
 
-                $q.all(promises).then(function(responses) {
-                    for(var i = 0; i < responses.length; i ++) {
-                        $log.log("response in getItems: ", responses);
-                        $log.log("categories: ", _categories);
-                        _allItems.push(responses[i]);
-                    }
-                });
             });
         }
 
-        this.addItem = function (syscoinAddress, item) {
+        var addItem = function (syscoinAddress, item) {
             var deferred = $q.defer();
 
             syscoinService.offerNew(syscoinAddress, JSON.stringify(item.category), item.title, item.quantity, item.price, JSON.stringify(item.description)).then(function(response){
@@ -104,7 +66,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             return deferred.promise;
         }
 
-        this.getItem = function(guid) {
+        var getItem = function(guid) {
             var item;
 
             var deferred = $q.defer();
@@ -151,7 +113,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
         }
 
         //parses the item responses once asynchronously returned
-        this.parseItemResponses = function(responses) {
+        var parseItemResponses = function(responses) {
             var items = new Array();
             console.log("TOTAL RESULTS: " + responses.length);
             for(var i = 0; i < responses.length; i++) {
@@ -186,6 +148,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
          * @param category to search for
          */
         function containsCategory(collection, category) {
+            $log.log("Checking if category " + category + " exists in", collection);
             for(var i = 0; i < collection.length; i++) {
                 if(collection[i] == category);
                     return collection[i];
@@ -195,13 +158,25 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
         }
 
         function getCachedItem(guid) {
+            $log.log("Searching for cached item: " + guid + "in:", _allItems);
             for(var i = 0; i < _allItems.length; i++ ) {
                 if(_allItems[i].id == guid) {
+                    $log.log("Item found");
                     return _allItems[i];
                 }
             }
 
+            $log.log("ITEM NOT FOUND- " + guid);
             return null;
+        }
+
+        return {
+            getAllItems: getAllItems,
+            getItem: getItem,
+
+            allItems: function() { return _allItems; },
+            featuredItems: function() { return _featuredItems; },
+            categories: function() { return _categories; }
         }
 
     }]);

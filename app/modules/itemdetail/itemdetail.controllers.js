@@ -1,15 +1,20 @@
 'use strict';
 
-angular.module('itemdetail.controllers', ['blockmarket.services'])
-    .controller('ItemDetailCtrl', ['$scope', '$route', '$routeParams', 'blockmarketService', '$log', '$q', function ($scope, $route, $routeParams, blockmarketService, $log, $q) {
+angular.module('itemdetail.controllers', ['blockmarket.services', 'ui.bootstrap'])
+    .controller('ItemDetailCtrl', ['$scope', '$route', '$routeParams', 'blockmarketService', '$log', '$q', '$modal',
+        function ($scope, $route, $routeParams, blockmarketService, $log, $q, $modal) {
         $scope.itemDetailActive = true; //sets the style for nav
 
         $log.log("Getting item details for params: ", $routeParams);
 
         var promise = blockmarketService.getItem($routeParams.guid).then(function(item) {
-            $log.log("Got result: ", item);
             $scope.item = item;
         });
 
-
+        $scope.buyItem = function() {
+            var modalInstance = $modal.open({
+                templateUrl: 'app/shared/partials/buyItemModal.tpl.html',
+                controller: 'BuyItemCtrl'
+            });
+        }
     }]);

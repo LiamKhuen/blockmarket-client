@@ -24,5 +24,6 @@ var app = angular.module('blockmarket', [
     syscoinService.getAccountAddress("").then(function(response) {
         $log.log("Root address:", response.data.result);
         $rootScope.syscoinAddress = response.data.result;
+        $rootScope.blockmarketService = blockmarketService;
     });
 }]);
