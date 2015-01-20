@@ -27,13 +27,13 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             syscoinAPIService.offerList().then(function(offers) {
                 _featuredItems = [];
                 //iterate over offers and get the full data of non expired offers
-                for(var i = 0; i < offers.length; i++) {
+                for(var i = 0; i < offers.data.length; i++) {
                     //if the offer is not expired, add it to the queue to get full data on it
-                    if (offers[i].expired == undefined) {
-                        $log.log("Adding item: ", offers[i]);
-                        _itemGuids.push(offers[i].name);
+                    if (offers.data[i].expired == undefined) {
+                        $log.log("Adding item: ", offers.data[i]);
+                        _itemGuids.push(offers.data[i].name);
 
-                        itemGuidsToFetch.push(offers[i].name);
+                        itemGuidsToFetch.push(offers.data[i].name);
                     }
                 }
 
@@ -93,7 +93,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             if(itemFoundInCache === false) {
                 syscoinAPIService.offerInfo(guid).then(function(response) {
                     console.log('RESULT', response);
-                    item = response.data.result;
+                    item = response.data;
                     item.description = JSON.parse(item.description);
                     item.category = JSON.parse(item.category);
 
