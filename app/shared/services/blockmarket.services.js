@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.marketconfig', 'angular-syscoin'])
-    .factory('blockmarketService', ['$http', '$timeout', '$q', 'HOST', 'FEATURED_ITEMS', 'syscoinService', '$log', function($http, $timeout, $q, HOST, FEATURED_ITEMS, syscoinService, $log) {
+angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.marketconfig', 'angular-syscoin-api'])
+    .factory('blockmarketService', ['$http', '$timeout', '$q', 'HOST', 'FEATURED_ITEMS', 'syscoinAPIService', '$log', function($http, $timeout, $q, HOST, FEATURED_ITEMS, syscoinAPIService, $log) {
 
         //public vars exposed via some public function
         var _allItems = [];
@@ -24,16 +24,16 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             var itemGuidsToFetch = [];
 
             var _this = this;
-            syscoinService.offerList().then(function(response) {
+            syscoinAPIService.offerList().then(function(offers) {
                 _featuredItems = [];
                 //iterate over offers and get the full data of non expired offers
-                for(var i = 0; i < response.data.result.length; i++) {
+                for(var i = 0; i < offers.length; i++) {
                     //if the offer is not expired, add it to the queue to get full data on it
-                    if (response.data.result[i].expired == undefined) {
-                        $log.log("Adding item: ", response.data.result[i]);
-                        _itemGuids.push(response.data.result[i].name);
+                    if (offers[i].expired == undefined) {
+                        $log.log("Adding item: ", offers[i]);
+                        _itemGuids.push(offers[i].name);
 
-                        itemGuidsToFetch.push(response.data.result[i].name);
+                        itemGuidsToFetch.push(offers[i].name);
                     }
                 }
 
@@ -59,7 +59,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
         var addItem = function (syscoinAddress, item) {
             var deferred = $q.defer();
 
-            syscoinService.offerNew(syscoinAddress, JSON.stringify(item.category), item.title, item.quantity, item.price, JSON.stringify(item.description)).then(function(response){
+            syscoinAPIService.offerNew(syscoinAddress, JSON.stringify(item.category), item.title, item.quantity, item.price, JSON.stringify(item.description)).then(function(response){
                 $log.log("OfferNew result:", response);
             });
 
@@ -91,7 +91,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             }
 
             if(itemFoundInCache === false) {
-                syscoinService.offerInfo(guid).then(function(response) {
+                syscoinAPIService.offerInfo(guid).then(function(response) {
                     console.log('RESULT', response);
                     item = response.data.result;
                     item.description = JSON.parse(item.description);
