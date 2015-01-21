@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('adminhome.controllers', ['blockmarket.services', 'angular-syscoin', 'ui.bootstrap'])
-    .controller('AdminHomeCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', 'syscoinService', '$modal', function ($rootScope, $scope, $q, blockmarketService, syscoinService, $modal) {
+angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap'])
+    .controller('AdminHomeCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modal', function ($rootScope, $scope, $q, blockmarketService, $modal) {
         $rootScope.activeView = 'admin'; //sets the style for nav
 
         $scope.launchModal = function(modalType) {
@@ -12,7 +12,7 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'angular-syscoi
         }
 
     }])
-    .controller('AddItemCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', 'syscoinService', '$modalInstance', '$log', function ($rootScope, $scope, $q, blockmarketService, syscoinService, $modalInstance, $log) {
+    .controller('AddItemCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modalInstance', '$log', function ($rootScope, $scope, $q, blockmarketService, $modalInstance, $log) {
         $rootScope.activeView = 'admin'; //sets the style for nav
 
         $scope.master = {};

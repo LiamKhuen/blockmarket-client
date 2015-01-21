@@ -17,11 +17,11 @@ var app = angular.module('blockmarket', [
     $routeProvider.when('/items', { controller:'AllItemsCtrl', templateUrl:'app/modules/allitems/allitems.tpl.html'});
     $routeProvider.when('/item/:guid', { controller:'ItemDetailCtrl', templateUrl:'app/modules/itemdetail/itemdetail.tpl.html'});
     $routeProvider.otherwise({ redirectTo:'/' });
-}]).run(['$rootScope', '$log', 'blockmarketService', 'syscoinService', function($rootScope, $log, blockmarketService, syscoinService){
+}]).run(['$rootScope', '$log', 'blockmarketService', 'syscoinAPIService', function($rootScope, $log, blockmarketService, syscoinAPIService){
     //fetch all the items
     blockmarketService.getAllItems();
 
-    syscoinService.getAccountAddress("").then(function(response) {
+    syscoinAPIService.getAccountAddress("").then(function(response) {
         $log.log("Root address:", response.data.result);
         $rootScope.syscoinAddress = response.data.result;
         $rootScope.blockmarketService = blockmarketService;
