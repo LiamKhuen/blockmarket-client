@@ -17,4 +17,6 @@ angular.module('itemdetail.controllers', ['blockmarket.services', 'ui.bootstrap'
                 controller: 'BuyItemCtrl'
             });
         }
+
+        $scope.categories = blockmarketService.categories();
     }]);

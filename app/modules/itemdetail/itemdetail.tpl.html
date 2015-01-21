@@ -1,15 +1,10 @@
 <div style="width: 100%;text-align:left;">
   <h1>{{ item.title }}</h1>
 
-  <div class="category-side">
-  <ul class="nav nav-list" id="filter">
-  <li class="nav-header">Categories</li>
-  <li><a class="filter" data-filter=".cat-12">All Categories</a></li>
-  <li><a class="filter" data-filter=".cat-12">Clothing</a></li>
-  <li><a class="filter" data-filter=".cat-12">Gadgets</a></li>
-  </ul>
-  </div>
-    <div class="all-items-border">
+  <category-list categories="categories"></category-list>
+
+  <div class="all-items-border">
+
 <div class="item-img">
   <span ng-switch="item.description.images.length">
     <img ng-switch-when="0" ng-src="holder.js/300x161" holder-fix>
@@ -18,6 +13,7 @@
 </div>
 <div class="item-data">
 <div class="item-details">
+  <p class="item-titles">GUID: <span class="label label-info">{{ item.id }}</span></p><br />
   <p class="item-titles">Quantity: <span class="label label-info">{{ item.quantity }}</span></p><br />
   <p class="item-titles">Price: <span class="label label-info">{{ item.price }} SYS</span></p><br />
   <p class="item-titles">Description: <p class="lead">{{ item.description.description}}</p></p>
