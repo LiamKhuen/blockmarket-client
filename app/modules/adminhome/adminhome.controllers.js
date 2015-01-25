@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap'])
-    .controller('AdminHomeCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modal', function ($rootScope, $scope, $q, blockmarketService, $modal) {
+    .controller('AdminCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modal', function ($rootScope, $scope, $q, blockmarketService, $modal) {
         $rootScope.activeView = 'admin'; //sets the style for nav
 
         $scope.launchModal = function(modalType) {
@@ -23,7 +23,7 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap']
             //format the description object according to the spec
             var description = {
                 description: item.description,
-                images: [ item.imageUrl ],
+                images: [ item.imageURL ],
                 EIN: item.ein,
                 UPC: item.upc,
                 website: item.website,
@@ -38,9 +38,9 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap']
             item.description = description;
             item.category = category;
 
-            $log.log("Trying to add item:", item);
+            $log.log("Trying to add item: | " + escapee(JSON.stringify(item)), item);
 
-            blockmarketService.addItem($rootScope.syscoinAddress, item);
+           // blockmarketService.addItem($rootScope.syscoinAddress, item);
         };
 
         $scope.cancel = function() {

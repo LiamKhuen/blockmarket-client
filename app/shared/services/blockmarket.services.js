@@ -1,31 +1,76 @@
 'use strict';
 
-angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.marketconfig', 'angular-syscoin-api'])
-    .factory('blockmarketService', ['$http', '$timeout', '$q', 'HOST', 'FEATURED_ITEMS', 'syscoinAPIService', '$log', function($http, $timeout, $q, HOST, FEATURED_ITEMS, syscoinAPIService, $log) {
+angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.marketconstants', 'angular-syscoin-api'])
+    .service('blockmarketService', ['$http', '$timeout', '$q', 'HOST', 'FEATURED_ITEMS', 'syscoinAPIService', '$log', 'EVENTS', '$rootScope', function($http, $timeout, $q, HOST, FEATURED_ITEMS, syscoinAPIService, $log, EVENTS, $rootScope) {
 
-        //public vars exposed via some public function
-        var _allItems = [];
         var _categories = [];
+        var _allItems = [];
         var _itemGuids = [];
-        var _featuredItems = [];
 
-        //once the items have been fetched in full, simply reuse the cache rather than recalling
-        //the daemon as items are unlikely to change mid-session and if they do, errors will be thrown
-        //by the daemon
-        var _cacheItems = true;
+        function addItem(syscoinAddress, item) {
+            var deferred = $q.defer();
 
-        var getFeaturedItems = function() {
-            return _featuredItems;
+            syscoinAPIService.offerNew(syscoinAddress, JSON.stringify(item.category), item.title, item.quantity, item.price, JSON.stringify(item.description)).then(function(response){
+                $log.log("OfferNew result:", response);
+            });
+
+            return deferred.promise;
+        }
+
+        function getCategories() {
+            $log.log("GET CATEGORIES" + _categories.length);
+            if(_categories.length == 0 ) {
+                $log.log("Something should be done to fetch the categories.");
+                var itemGuidsToFetch = [];
+                var _this = this;
+                syscoinAPIService.offerList().then(function(offers) {
+                    //iterate over offers and get the full data of non expired offers
+                    for(var i = 0; i < offers.data.length; i++) {
+                        //if the offer is not expired, add it to the queue to get full data on it
+                        if (offers.data[i].expired == undefined) {
+                            $log.log("Adding item: ", offers.data[i]);
+                            _itemGuids.push(offers.data[i].name);
+
+                            itemGuidsToFetch.push(offers.data[i].name);
+                        }
+                    }
+
+                    $log.log("Total items for categories: " + itemGuidsToFetch.length);
+
+                    var promises = [];
+                    for(i = 0; i < itemGuidsToFetch.length; i++) {
+                        promises.push(_this.getItem(itemGuidsToFetch[i]));
+                    }
+
+                    $q.all(promises).then(function(items) {
+                        $rootScope.$broadcast(EVENTS.all_categories_loaded, _categories);
+                    })
+                });
+            }else{
+                return _categories;
+            }
+        }
+
+        function getFeaturedItems() {
+            var promises = [];
+            for (var i = 0; i < FEATURED_ITEMS.length; i++) {
+                var itemGuid = FEATURED_ITEMS[i];
+                promises.push(getItem(itemGuid));
+            }
+
+            $q.all(promises).then(function(items) {
+                $log.log("got all the featured items!", items);
+                $rootScope.$broadcast(EVENTS.featured_items_loaded, items);
+            });
         }
 
         //returns request object to get ALL the items in this marketplace
-        var getAllItems = function() {
+        function getAllItems() {
             console.log("getItems");
             var itemGuidsToFetch = [];
 
             var _this = this;
             syscoinAPIService.offerList().then(function(offers) {
-                _featuredItems = [];
                 //iterate over offers and get the full data of non expired offers
                 for(var i = 0; i < offers.data.length; i++) {
                     //if the offer is not expired, add it to the queue to get full data on it
@@ -37,83 +82,47 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
                     }
                 }
 
-                console.log("Total items: " + itemGuidsToFetch.length);
+                $log.log("Total items: " + itemGuidsToFetch.length);
 
+                var promises = [];
                 for(i = 0; i < itemGuidsToFetch.length; i++) {
-                    _this.getItem(itemGuidsToFetch[i]).then(function(item) {
-                        _allItems.push(item);
-
-                        //check to see if its featured
-                        for(var i = 0; i < FEATURED_ITEMS.length; i++) {
-                            if(FEATURED_ITEMS[i] == item.id) {
-                                $log.log("fetchin featurd " + item.id);
-                                _featuredItems.push(getCachedItem(FEATURED_ITEMS[i]));
-                            }
-                        }
-                    });
+                    promises.push(_this.getItem(itemGuidsToFetch[i]));
                 }
 
+                $q.all(promises).then(function(items) {
+                    _allItems = items;
+                    $rootScope.$broadcast(EVENTS.all_items_loaded, items);
+                })
             });
         }
 
-        var addItem = function (syscoinAddress, item) {
-            var deferred = $q.defer();
-
-            syscoinAPIService.offerNew(syscoinAddress, JSON.stringify(item.category), item.title, item.quantity, item.price, JSON.stringify(item.description)).then(function(response){
-                $log.log("OfferNew result:", response);
-            });
-
-            return deferred.promise;
-        }
-
-        var getItem = function(guid) {
+        function getItem(guid) {
             var item;
 
             var deferred = $q.defer();
 
-            //caching
-            var itemFoundInCache = false;
-            if(_cacheItems === true && _allItems.length > 0) {
-                var cachedItem = containsItem(_allItems, guid);
-                if(cachedItem !== null) { //item found
-                    $log.log("Got a regular item from the cache!");
+            syscoinAPIService.offerInfo(guid).then(function(response) {
+                console.log('RESULT', response);
+                item = response.data;
+                item.description = JSON.parse(item.description);
+                item.category = JSON.parse(item.category);
 
-                    //TODO refactor
-                    if(containsCategory(_categories, cachedItem.category[0]) === null) {
-                        $log.log("category added.");
-                        _categories.push(cachedItem.category[0]);
-                    }
+                $log.log("Item category: " + item.category[0]);
 
-                    deferred.resolve(cachedItem);
-                    itemFoundInCache = true;
-                    return deferred.promise;
+                //TODO refactor
+                if(containsCategory(_categories, item.category[0]) === null) {
+                    $log.log("category added: " + item.category[0]);
+                    _categories.push(item.category[0]);
                 }
-            }
 
-            if(itemFoundInCache === false) {
-                syscoinAPIService.offerInfo(guid).then(function(response) {
-                    console.log('RESULT', response);
-                    item = response.data;
-                    item.description = JSON.parse(item.description);
-                    item.category = JSON.parse(item.category);
-
-                    $log.log("Item category: " + item.category[0]);
-
-                    //TODO refactor
-                    if(containsCategory(_categories, item.category[0]) === null) {
-                        $log.log("category added via other route.");
-                        _categories.push(item.category[0]);
-                    }
-
-                    deferred.resolve(item);
-                });
-            }
+                deferred.resolve(item);
+            });
 
             return deferred.promise;
         }
 
         //parses the item responses once asynchronously returned
-        var parseItemResponses = function(responses) {
+        function parseItemResponses(responses) {
             var items = new Array();
             console.log("TOTAL RESULTS: " + responses.length);
             for(var i = 0; i < responses.length; i++) {
@@ -150,7 +159,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
         function containsCategory(collection, category) {
             $log.log("Checking if category " + category + " exists in", collection);
             for(var i = 0; i < collection.length; i++) {
-                if(collection[i] == category);
+                if(collection[i] == category)
                     return collection[i];
             }
 
@@ -173,10 +182,8 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
         return {
             getAllItems: getAllItems,
             getItem: getItem,
-
-            allItems: function() { return _allItems; },
-            featuredItems: function() { return _featuredItems; },
-            categories: function() { return _categories; }
+            getFeaturedItems: getFeaturedItems,
+            getCategories: getCategories
         }
 
     }]);

@@ -3,5 +3,10 @@
 angular.module('blockmarket.appconfig', [])
     .constant("HOST","http://localhost:8080");
 
-angular.module('blockmarket.marketconfig', [])
-    .constant("FEATURED_ITEMS",["1e90d2ecfb0073f800", "659f14e5163b65fc00", "8861db204ba0de13"]);
+angular.module('blockmarket.marketconstants', [])
+    .constant("FEATURED_ITEMS",["c1aea8ce078863fd00", "ee118179c78e636e", "34d69723e5bc220a"])
+    .constant("EVENTS", {
+        featured_items_loaded: "featured_items_loaded",
+        all_items_loaded: "all_items_loaded",
+        all_categories_loaded: "all_categories_loaded"
+    });

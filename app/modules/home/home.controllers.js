@@ -1,8 +1,12 @@
 'use strict';
 
-angular.module('home.controllers', ['global.directives', 'blockmarket.services'])
-    .controller('HomeCtrl', ['$rootScope', '$scope', '$q', '$log', 'blockmarketService', function ($rootScope, $scope, $q, $log, blockmarketService) {
+angular.module('home.controllers', ['global.directives', 'blockmarket.services', 'blockmarket.marketconstants'])
+    .controller('HomeCtrl', ['$rootScope', '$scope', '$log', 'blockmarketService', 'EVENTS', function ($rootScope, $scope, $log, blockmarketService, EVENTS) {
         $rootScope.activeView = 'home'; //sets the style for nav
 
-        $scope.featuredItems = blockmarketService.featuredItems();
+        blockmarketService.getFeaturedItems();
+
+        $scope.$on(EVENTS.featured_items_loaded, function(event, items) {
+            $scope.featuredItems = items;
+        })
     }]);
