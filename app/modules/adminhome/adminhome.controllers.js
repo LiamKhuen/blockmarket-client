@@ -85,7 +85,9 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap']
 
         $scope.title = popupTitle;
 
-        $log.log("GUID:", itemGuid);
+        blockmarketService.getItem(itemGuid).then(function(item) {
+            $scope.item = item;
+        });
 
 //        $scope.master = {};
 //

@@ -11,7 +11,7 @@
     
      <div class="form-group">
         <label for="inputEmail">Category</label>
-        <input type="text" class="form-control" ng-model="item.category" name="itemName" id="category">
+        <input type="text" class="form-control" ng-model="item.category[0]" name="itemName" id="category">
     </div>
     
      <div class="form-group">
@@ -29,47 +29,47 @@
     
      <div class="form-group">
         <label for="inputEmail">Image URL</label>
-        <input type="text" class="form-control" ng-model="item.imageURL" name="imageURL" id="imageURL">
+        <input type="text" class="form-control" ng-model="item.description.images[0]" name="imageURL" id="imageURL">
     </div>
     
      <div class="form-group">
         <label for="inputEmail">EIN <a href="">(What is this?)</a></label>
-        <input type="text" class="form-control" ng-model="item.ein" name="ein" id="ein">
+        <input type="text" class="form-control" ng-model="item.description.ein" name="ein" id="ein">
     </div>
      
      <div class="form-group">
         <label for="inputEmail">UPC <a href="">(What is this?)</a></label>
-        <input type="text" class="form-control" ng-model="item.upc" name="upc" id="upc">
+        <input type="text" class="form-control" ng-model="item.description.upc" name="upc" id="upc">
     </div>
         
      <div class="form-group">
         <label for="inputEmail">Website</label>
-        <input type="text" class="form-control" ng-model="item.website" name="website" id="website">
+        <input type="text" class="form-control" ng-model="item.description.website" name="website" id="website">
     </div>
         
      <div class="form-group">
         <label for="inputEmail">Description</label>
-       <textarea ng-model="item.description" class="form-control" name="website" id="description" rows="3"  placeholder="Description"></textarea>
+       <textarea ng-model="item.description.description" class="form-control" name="website" id="description" rows="3"  placeholder="Description"></textarea>
     </div>
         
      <div class="form-group">
         <label for="inputEmail">Location</label>
-        <input type="text" class="form-control" ng-model="item.location" name="location" id="location">
+        <input type="text" class="form-control" ng-model="item.description.location" name="location" id="location">
     </div>
         
      <div class="form-group">
         <label for="inputEmail">Delivery Time</label>
-        <input type="text" class="form-control" ng-model="item.deliveryTime" name="deliveryTime" id="deliveryTime">
+        <input type="text" class="form-control" ng-model="item.description.deliveryTime" name="deliveryTime" id="deliveryTime">
     </div>
         
      <div class="form-group">
         <label for="inputEmail">Shipping Method</label>
-        <input type="text" class="form-control" ng-model="item.shipMethod" name="shipMethod" id="shipMethod">
+        <input type="text" class="form-control" ng-model="item.description.shipMethod" name="shipMethod" id="shipMethod">
     </div>
         
      <div class="form-group">
         <label for="inputEmail">Condition</label>
-        <input type="text" class="form-control" ng-model="item.condition" name="condition" id="condition">
+        <input type="text" class="form-control" ng-model="item.description.condition" name="condition" id="condition">
     </div>   
 </form>
 
