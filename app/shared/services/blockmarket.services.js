@@ -66,7 +66,6 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
 
         //returns request object to get ALL the items in this marketplace
         function getAllItems() {
-            console.log("getItems");
             var itemGuidsToFetch = [];
 
             var _this = this;
@@ -94,6 +93,20 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
                     $rootScope.$broadcast(EVENTS.all_items_loaded, items);
                 })
             });
+        }
+
+
+        //returns a "lite" item list, includes expired items
+        function getItemList() {
+            var itemGuidsToFetch = [];
+
+            var _this = this;
+            var deferred = $q.defer();
+            syscoinAPIService.offerList().then(function(result) {
+                deferred.resolve(result.data);
+            });
+
+            return deferred.promise;
         }
 
         function getItem(guid) {
@@ -183,7 +196,8 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             getAllItems: getAllItems,
             getItem: getItem,
             getFeaturedItems: getFeaturedItems,
-            getCategories: getCategories
+            getCategories: getCategories,
+            getItemList: getItemList
         }
 
     }]);
