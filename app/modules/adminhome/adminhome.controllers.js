@@ -71,10 +71,27 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap']
             item.description = description;
             item.category = category;
 
-            $log.log("Trying to add item: | " + escapee(JSON.stringify(item)), item);
+            var slashed = addslashes(JSON.stringify(item));
+
+            $log.log("Trying to add item: | " + slashed, item);
+
+            var unslashed = slashed.replace(/\\"/g,'WORDS"');
+
+            $log.log("UNSLASH: " + unslashed);
 
            // blockmarketService.addItem($rootScope.syscoinAddress, item);
         };
+
+        function addslashes(string) {
+            return string.replace(/\\/g, '\\\\').
+                replace(/\u0008/g, '\\b').
+                replace(/\t/g, '\\t').
+                replace(/\n/g, '\\n').
+                replace(/\f/g, '\\f').
+                replace(/\r/g, '\\r').
+                replace(/'/g, '\\\'').
+                replace(/"/g, '\\"');
+        }
 
         $scope.cancel = function() {
             $modalInstance.dismiss('cancel');
