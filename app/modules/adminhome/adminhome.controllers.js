@@ -71,7 +71,8 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap']
             item.description = description;
             item.category = category;
 
-            var slashed = addslashes(JSON.stringify(item));
+            var slashed = JSON.stringify(item);
+            //item.description = slashed;
 
             $log.log("Trying to add item: | " + slashed, item);
 
@@ -79,7 +80,7 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap']
 
             $log.log("UNSLASH: " + unslashed);
 
-           // blockmarketService.addItem($rootScope.syscoinAddress, item);
+           blockmarketService.addItem($rootScope.syscoinAddress, item);
         };
 
         function addslashes(string) {

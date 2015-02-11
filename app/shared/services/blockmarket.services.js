@@ -9,9 +9,19 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
 
         function addItem(syscoinAddress, item) {
             var deferred = $q.defer();
-
             syscoinAPIService.offerNew(syscoinAddress, JSON.stringify(item.category), item.title, item.quantity, item.price, JSON.stringify(item.description)).then(function(response){
-                $log.log("OfferNew result:", response);
+                $log.log("OfferNew result:" , response);
+
+                if(response.data) {
+                    $log.log("Activating offer:" + response.data[1]);
+                    syscoinAPIService.offerActivate(response.data[1]).then(function(response) {
+                        $log.log("OfferActivate result: ", response);
+                        if(response.data)
+                            deferred.resolve(response.data);
+
+                        deferred.reject(response);
+                    });
+                }
             });
 
             return deferred.promise;
@@ -197,7 +207,8 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             getItem: getItem,
             getFeaturedItems: getFeaturedItems,
             getCategories: getCategories,
-            getItemList: getItemList
+            getItemList: getItemList,
+            addItem: addItem
         }
 
     }]);
