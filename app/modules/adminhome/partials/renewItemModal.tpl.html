@@ -1,0 +1,40 @@
+<div modal="showModal" close="cancel()">
+  <div class="modal-header">
+    <h2>{{ title }}</h2>
+  </div>
+  <div class="modal-body">
+    <form novalidate class="simple-form">
+     <div class="form-group">
+        <label for="itemName">Item Name</label>
+        <input type="text" class="form-control" ng-model="item.title" name="itemName" id="itemName">
+    </div>
+    
+     <div class="form-group">
+        <label for="itemGuid">GUID</label>
+        <input type="text" class="form-control" ng-model="item.name" name="itemGuid" id="itemGuid">
+    </div>
+    
+    <div class="form-group">
+        <label for="renewalDuration">Renewal Duration</label>
+        <div class="input-group">
+        <input type="text" class="form-control" ng-model="item.renewal_duration" name="renewalDuration" id="renewalDuration" placeholder="10000">
+        <span class="input-group-addon">BLOCKS</span>
+        </div>
+    </div>
+
+    <div class="form-group">
+      <label for="price">Renewal Price</label>
+      <div class="input-group">
+        <input type="text" class="form-control" ng-model="item.price" name="price" id="price" placeholder="10000">
+        <span class="input-group-addon">SYS</span>
+      </div>
+    </div>
+
+</form>
+
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success" ng-click="addItem(item)">Renew Item</button><br />
+    <button class="btn" ng-click="cancel()">Cancel</button>
+  </div>
+</div>

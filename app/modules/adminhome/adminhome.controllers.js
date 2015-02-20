@@ -20,6 +20,18 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap']
                     });
                 break;
 
+                case 'renewItem':
+                    var modalInstance = $modal.open({
+                        templateUrl: 'app/modules/adminhome/partials/renewItemModal.tpl.html',
+                        controller: 'RenewItemCtrl'  ,
+                        resolve: {
+                            popupTitle: function () {
+                                return "Renew Item";
+                            }
+                        }
+                    });
+                break;
+
                 case 'editItem':
                     var modalInstance = $modal.open({
                         templateUrl: 'app/modules/adminhome/partials/addItemModal.tpl.html',
@@ -54,45 +66,68 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap']
             $scope.master = angular.copy(item);
 
             //format the description object according to the spec
-            var description = {
-                description: item.description,
-                images: [ item.imageURL ],
-                EIN: item.ein,
-                UPC: item.upc,
-                website: item.website,
-                item_location: item.location,
-                delivery_time: item.deliveryTime,
-                ship_method: item.shipMethod,
-                condition: item.condition
+            var offer = {
+                quantity: item.quantity,
+                price: item.price,
+                title: item.title,
+                description: {
+                    description: item.description.description,
+                    images: [ item.description.images[0] ],
+                    EIN: item.description.EIN,
+                    UPC: item.description.UPC,
+                    website: item.description.website,
+                    item_location: item.description.item_location,
+                    delivery_time: item.description.delivery_time,
+                    ship_method: item.description.ship_method,
+                    condition: item.description.condition
+                },
+
+                category: [ item.category[0] ]
             };
 
-            var category = [ item.category ];
+            $log.log("OFFER:", offer);
 
-            item.description = description;
-            item.category = category;
-
-            var slashed = JSON.stringify(item);
-            //item.description = slashed;
-
-            $log.log("Trying to add item: | " + slashed, item);
-
-            var unslashed = slashed.replace(/\\"/g,'WORDS"');
-
-            $log.log("UNSLASH: " + unslashed);
-
-           blockmarketService.addItem($rootScope.syscoinAddress, item);
+            blockmarketService.addItem($rootScope.syscoinAddress, item);
         };
 
-        function addslashes(string) {
-            return string.replace(/\\/g, '\\\\').
-                replace(/\u0008/g, '\\b').
-                replace(/\t/g, '\\t').
-                replace(/\n/g, '\\n').
-                replace(/\f/g, '\\f').
-                replace(/\r/g, '\\r').
-                replace(/'/g, '\\\'').
-                replace(/"/g, '\\"');
+        $scope.cancel = function() {
+            $modalInstance.dismiss('cancel');
         }
+    }])
+    .controller('RenewItemCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modalInstance', '$log', 'popupTitle', function ($rootScope, $scope, $q, blockmarketService, $modalInstance, $log, popupTitle) {
+        $rootScope.activeView = 'admin'; //sets the style for nav
+
+        $scope.title = popupTitle;
+
+        $scope.master = {};
+
+        $scope.addItem = function(item) {
+            $scope.master = angular.copy(item);
+
+            //format the description object according to the spec
+            var offer = {
+                quantity: item.quantity,
+                price: item.price,
+                title: item.title,
+                description: {
+                    description: item.description.description,
+                    images: [ item.description.images[0] ],
+                    EIN: item.description.EIN,
+                    UPC: item.description.UPC,
+                    website: item.description.website,
+                    item_location: item.description.item_location,
+                    delivery_time: item.description.delivery_time,
+                    ship_method: item.description.ship_method,
+                    condition: item.description.condition
+                },
+
+                category: [ item.category[0] ]
+            };
+
+            $log.log("OFFER:", offer);
+
+            blockmarketService.addItem($rootScope.syscoinAddress, item);
+        };
 
         $scope.cancel = function() {
             $modalInstance.dismiss('cancel');
