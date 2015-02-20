@@ -25,6 +25,9 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap']
                         templateUrl: 'app/modules/adminhome/partials/renewItemModal.tpl.html',
                         controller: 'RenewItemCtrl'  ,
                         resolve: {
+                            itemGuid: function () {
+                                return itemGuid;
+                            },
                             popupTitle: function () {
                                 return "Renew Item";
                             }
@@ -94,39 +97,21 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap']
             $modalInstance.dismiss('cancel');
         }
     }])
-    .controller('RenewItemCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modalInstance', '$log', 'popupTitle', function ($rootScope, $scope, $q, blockmarketService, $modalInstance, $log, popupTitle) {
+    .controller('RenewItemCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modalInstance', '$log', 'itemGuid', 'popupTitle', function ($rootScope, $scope, $q, blockmarketService, $modalInstance, $log, itemGuid, popupTitle) {
         $rootScope.activeView = 'admin'; //sets the style for nav
 
         $scope.title = popupTitle;
 
         $scope.master = {};
 
-        $scope.addItem = function(item) {
+        blockmarketService.getItem(itemGuid).then(function(item) {
+            $scope.item = item;
+        });
+
+        $scope.renewItem = function(item) {
             $scope.master = angular.copy(item);
-
-            //format the description object according to the spec
-            var offer = {
-                quantity: item.quantity,
-                price: item.price,
-                title: item.title,
-                description: {
-                    description: item.description.description,
-                    images: [ item.description.images[0] ],
-                    EIN: item.description.EIN,
-                    UPC: item.description.UPC,
-                    website: item.description.website,
-                    item_location: item.description.item_location,
-                    delivery_time: item.description.delivery_time,
-                    ship_method: item.description.ship_method,
-                    condition: item.description.condition
-                },
-
-                category: [ item.category[0] ]
-            };
-
-            $log.log("OFFER:", offer);
-
-            blockmarketService.addItem($rootScope.syscoinAddress, item);
+            $log.log("Renewing item: ", item);
+            blockmarketService.updateItem(itemGuid, item);
         };
 
         $scope.cancel = function() {
@@ -173,4 +158,4 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap']
         $scope.cancel = function() {
             $modalInstance.dismiss('cancel');
         }
-    }]);;
+    }]);

@@ -27,6 +27,19 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             return deferred.promise;
         }
 
+        function updateItem(itemGuid, item) {
+            var deferred = $q.defer();
+            syscoinAPIService.offerUpdate(itemGuid, JSON.stringify(item.category), item.title, item.quantity, item.price, JSON.stringify(item.description)).then(function(response){
+                $log.log("OfferUpdate result:" , response);
+
+                if(response.data) {
+                    deferred.resolve(response.data);
+                }
+            });
+
+            return deferred.promise;
+        }
+
         function getCategories() {
             $log.log("GET CATEGORIES" + _categories.length);
             if(_categories.length == 0 ) {
@@ -208,7 +221,8 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             getFeaturedItems: getFeaturedItems,
             getCategories: getCategories,
             getItemList: getItemList,
-            addItem: addItem
+            addItem: addItem,
+            updateItem: updateItem
         }
 
     }]);
