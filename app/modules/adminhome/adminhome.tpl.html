@@ -7,6 +7,9 @@
     </button>
   </div>
   <br /><br />
+  <div>
+    <alert ng-if="showAlert === true" type="success" close="closeAlert()">texy</alert>
+  </div>
   <table class="table table-hover">
     <thead>
     <tr>
@@ -16,7 +19,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="item in items | orderBy: 'expires_in' : reverse=true ">
+    <tr ng-repeat="item in items | orderBy: 'expires_in' : reverse=true" ng-if="item.expires_in > 0">
       <td ng-click="launchModal('editItem', item.name)">{{ item.value }}</td>
       <td>{{ item.name }}</td>
       <td>{{ item.expires_in }}</td>
@@ -24,6 +27,40 @@
     </tr>
     </tbody>
   </table>
+
+  <div ng-if="hasActiveItems === true && hasExpiredItems === true">
+    You also have expired offers or new items waiting for confirmations before being listed. <a ng-click="toggleExpiredItems()">Display offers.</a>
+  </div>
+
+  <div ng-if="hasActiveItems === false && hasExpiredItems === true" style="font-size:18px; font-weight: bold; text-align: center">
+    All your offers have expired or have not yet been fully confirmed. <a ng-click="toggleExpiredItems()">View expired offers.</a>
+  </div>
+
+  <div ng-if="hasActiveItems === false && hasExpiredItems === false" ng-click="launchModal('addItem')" style="font-size:18px; font-weight: bold; text-align: center">
+    You haven't listed any items yet. Click <a href="#">add item</a> to get started.
+  </div>
+
+  <div ng-show="showExpiredItems === true">
+    <h3>Expired Items</h3>
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th>Title</th>
+        <th>GUID</th>
+        <th>Expires In</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="item in items | orderBy: 'expires_in' : reverse=true" ng-if="item.expires_in < 0">
+        <td ng-click="launchModal('editItem', item.name)">{{ item.value }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.expires_in }}</td>
+        <td ng-click="launchModal('renewItem', item.name)"><a href="javascript:void(0)">renew</a></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
 </div>
 </body>
 </div>
