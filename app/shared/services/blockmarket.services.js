@@ -152,10 +152,12 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             var deferred = $q.defer();
 
             syscoinAPIService.offerInfo(guid).then(function(response) {
-                console.log('RESULT', response);
+                $log.log('RESULT', response);
                 item = response.data;
                 item.description = JSON.parse(item.description);
                 item.category = JSON.parse(item.category);
+
+                $log.log('ITEM', item);
 
                 $log.log("Item category: " + item.category[0]);
 
@@ -171,20 +173,20 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             return deferred.promise;
         }
 
-        //parses the item responses once asynchronously returned
-        function parseItemResponses(responses) {
-            var items = new Array();
-            console.log("TOTAL RESULTS: " + responses.length);
-            for(var i = 0; i < responses.length; i++) {
-                if(responses[i].data.result) {
-                    //only add confirmed items that aren't expired
-                    responses[i].data.result.description = JSON.parse(responses[i].data.result.description);
-                    items.push(responses[i].data.result);
-                }
-            }
-
-            return items;
-        }
+//        //parses the item responses once asynchronously returned
+//        function parseItemResponses(responses) {
+//            var items = new Array();
+//            console.log("TOTAL RESULTS: " + responses.length);
+//            for(var i = 0; i < responses.length; i++) {
+//                if(responses[i].data.result) {
+//                    //only add confirmed items that aren't expired
+//                    responses[i].data.result.description = JSON.parse(responses[i].data.result.description);
+//                    items.push(responses[i].data.result);
+//                }
+//            }
+//
+//            return items;
+//        }
 
         /**
          * Determines if a collection contains an offer

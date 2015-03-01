@@ -8,6 +8,7 @@ angular.module('allitems.controllers', ['blockmarket.services','blockmarket.mark
 
         $scope.$on(EVENTS.all_items_loaded, function(event, items) {
             $scope.items = items;
+
             $scope.categories = blockmarketService.getCategories();
         });
     }]);

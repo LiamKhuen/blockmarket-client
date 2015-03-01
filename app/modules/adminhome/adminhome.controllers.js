@@ -1,10 +1,31 @@
 'use strict';
 
-angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap'])
-    .controller('AdminCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modal', '$log', function ($rootScope, $scope, $q, blockmarketService, $modal, $log) {
+function checkRequiredFields(item) {
+    if(item.name == "" || item.name == undefined)
+        return false;
+
+    if(item.quantity == "" || item.quantity == undefined)
+        return false;
+
+    if(item.price == "" || item.price == undefined)
+        return false;
+
+    if(item.category == "" || item.category == undefined)
+        return false;
+
+    if(item.description == "" || item.description == undefined)
+        return false;
+
+    return true;
+}
+
+angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap', 'blockmarket.marketconstants'])
+    .controller('AdminCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modal', '$log', 'EVENTS', 'syscoinAPIService',
+        function ($rootScope, $scope, $q, blockmarketService, $modal, $log, EVENTS, syscoinAPIService) {
+
         $rootScope.activeView = 'admin'; //sets the style for nav
-        $scope.showAlert = false;
-        $scope.alert = null;
+        $scope.user = {username: "", password: ""};
+
 
         function hasActiveItems() {
             for(var i = 0; i < $scope.items.length; i++) {
@@ -24,6 +45,20 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap']
             }
 
             return false;
+        }
+
+        $scope.authenticated = $rootScope.authenticated;
+        $scope.authFailed = false;
+        $scope.authenticate = function(user) {
+            syscoinAPIService.authenticate(user.username, user.password).then(function(response) {
+                $log.log("Auth result: ", response);
+                $scope.authenticated = response.data.authenticated === true;
+                if($scope.authenticated !== true) {
+                    $scope.authFailed = true;
+                }else{
+                    $scope.authFailed = false;
+                }
+            });
         }
 
         $scope.launchModal = function(modalType, itemGuid) {
@@ -79,15 +114,42 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap']
             $scope.showExpiredItems = !$scope.showExpiredItems;
         }
 
-        blockmarketService.getItemList().then(function(offers) {
-            $log.log("all offers: ", offers);
-            $scope.items = offers;
-            $scope.hasExpiredItems = hasExpiredItems();
-            $scope.hasActiveItems = hasActiveItems();
+        function reloadItems() {
+            blockmarketService.getItemList().then(function(offers) {
+
+                $log.log("all offers: ", offers);
+                $scope.items = offers;
+                $scope.hasExpiredItems = hasExpiredItems();
+                $scope.hasActiveItems = hasActiveItems();
+                $scope.hasPendingItems = false;
+
+                $scope.pendingItemBlockHeight = (parseInt($rootScope.currentBlocks) - 6710) * -1;
+                $log.log("Pending item block height (+/- 100 blocks):" + $scope.pendingItemBlockHeight + ", " + $rootScope.currentBlocks);
+
+
+                //items that are pending confirmation show an expires_in height of roughtly current_block_height - 6710.
+                //add 100 blocks as a rough buffer.
+                //TODO: think up a way to improve identification of pending items.
+                for(var i = 0; i < $scope.items.length; i++) {
+                    if($scope.items[i].expires_in < 0 && $scope.items[i].expires_in > ($scope.pendingItemBlockHeight - 20) ) {
+                        $scope.items[i].pendingConfirmation = true;
+                        $scope.hasPendingItems = true;
+                    }else{
+                        $scope.items[i].pendingConfirmation = false;
+                    }
+                }
+            });
+        }
+
+        reloadItems();
+
+        $rootScope.$on(EVENTS.reload_admin, function(){
+            $log.log("Reload Items event.");
+            reloadItems();
         })
 
     }])
-    .controller('AddItemCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modalInstance', '$log', 'popupTitle', function ($rootScope, $scope, $q, blockmarketService, $modalInstance, $log, popupTitle) {
+    .controller('AddItemCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modalInstance', '$log', 'popupTitle','EVENTS', function ($rootScope, $scope, $q, blockmarketService, $modalInstance, $log, popupTitle, EVENTS) {
         $rootScope.activeView = 'admin'; //sets the style for nav
 
         $scope.title = popupTitle;
@@ -117,47 +179,24 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap']
                 category: (item.category != undefined && item.category.length > 0) ? [ item.category[0] ] : []
             };
 
-            $log.log("OFFER:", offer);
+            if(checkRequiredFields(offer) === true) {
+                $log.log("OFFER:", offer);
 
-            blockmarketService.addItem($rootScope.syscoinAddress, item).then(function(response) {
-                alert("Item Successfully Added! Please allow one confirmation for the item to be reflected in the table. Until its confirmed it will display as expired.");
-                $modalInstance.dismiss('cancel');
-            });
+                blockmarketService.addItem($rootScope.syscoinAddress, item).then(function(response) {
+                    alert("Item Successfully Added! Please allow one confirmation for the item to be reflected in the table. Until its confirmed it will display as expired.");
+                    $modalInstance.dismiss('cancel');
+                    $rootScope.$broadcast(EVENTS.reload_admin);
+                });
+            }else{
+                alert("One or more required fields are incomplete. Please populate all fields indicated as required with a '*' before adding a new item.");
+            }
         };
 
         $scope.cancel = function() {
             $modalInstance.dismiss('cancel');
         }
     }])
-    .controller('RenewItemCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modalInstance', '$log', 'itemGuid', 'popupTitle', function ($rootScope, $scope, $q, blockmarketService, $modalInstance, $log, itemGuid, popupTitle) {
-        $rootScope.activeView = 'admin'; //sets the style for nav
-
-        $scope.title = popupTitle;
-
-        $scope.master = {};
-
-        blockmarketService.getItem(itemGuid).then(function(item) {
-            $scope.item = item;
-        });
-
-        $scope.renewItem = function(item) {
-            $scope.master = angular.copy(item);
-            $log.log("Renewing item: ", item);
-            blockmarketService.renewItem(item.id).then(function(item) {
-                alert("Item Successfully Renewed! Please allow one confirmation for the new expiry to be reflected in the table.");
-                $modalInstance.dismiss('cancel');
-            });
-        };
-
-        $scope.cancel = function() {
-            $modalInstance.dismiss('cancel');
-        }
-
-        $scope.closeAlert = function() {
-            $scope.showAlert = false;
-        }
-    }])
-    .controller('EditItemCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modalInstance', '$log', 'itemGuid', 'popupTitle', function ($rootScope, $scope, $q, blockmarketService, $modalInstance, $log, itemGuid, popupTitle) {
+    .controller('EditItemCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modalInstance', '$log', 'itemGuid', 'popupTitle', 'EVENTS', function ($rootScope, $scope, $q, blockmarketService, $modalInstance, $log, itemGuid, popupTitle, EVENTS) {
         $rootScope.activeView = 'admin'; //sets the style for nav
 
         $scope.title = popupTitle;
@@ -191,16 +230,50 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap']
                 category: (item.category != undefined && item.category.length > 0) ? [ item.category[0] ] : []
             };
 
-            $log.log("Trying to edit item:", offer);
+            if(checkRequiredFields(offer) === true) {
+                $log.log("Trying to edit item:", offer);
 
-            blockmarketService.updateItem(item).then(function(response) {
-                $log.log("Response of update:", response);
-                alert("Item Successfully Updated! Please allow one confirmation for the edits to be reflected in the table.");
+                blockmarketService.updateItem(item).then(function(response) {
+                    $log.log("Response of update:", response);
+                    alert("Item Successfully Updated! Please allow one confirmation for the edits to be reflected in the table.");
+                    $modalInstance.dismiss('cancel');
+                    $rootScope.$broadcast(EVENTS.reload_admin);
+                });
+            }else{
+                alert("One or more required fields are incomplete. Please populate all fields indicated as required with a '*' before submitting item updates.");
+            }
+        };
+
+        $scope.cancel = function() {
+            $modalInstance.dismiss('cancel');
+        }
+    }])
+    .controller('RenewItemCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modalInstance', '$log', 'itemGuid', 'popupTitle', 'EVENTS', function ($rootScope, $scope, $q, blockmarketService, $modalInstance, $log, itemGuid, popupTitle, EVENTS) {
+        $rootScope.activeView = 'admin'; //sets the style for nav
+
+        $scope.title = popupTitle;
+
+        $scope.master = {};
+
+        blockmarketService.getItem(itemGuid).then(function(item) {
+            $scope.item = item;
+        });
+
+        $scope.renewItem = function(item) {
+            $scope.master = angular.copy(item);
+            $log.log("Renewing item: ", item);
+            blockmarketService.renewItem(item.id).then(function(item) {
+                alert("Item Successfully Renewed! Please allow one confirmation for the new expiry to be reflected in the table.");
                 $modalInstance.dismiss('cancel');
+                $rootScope.$broadcast(EVENTS.reload_admin);
             });
         };
 
         $scope.cancel = function() {
             $modalInstance.dismiss('cancel');
+        }
+
+        $scope.closeAlert = function() {
+            $scope.showAlert = false;
         }
     }]);

@@ -8,5 +8,6 @@ angular.module('blockmarket.marketconstants', [])
     .constant("EVENTS", {
         featured_items_loaded: "featured_items_loaded",
         all_items_loaded: "all_items_loaded",
-        all_categories_loaded: "all_categories_loaded"
+        all_categories_loaded: "all_categories_loaded",
+        reload_admin: "reload_admin"
     });

@@ -6,17 +6,43 @@
   <div class="all-items-border">
 
 <div class="item-img">
-  <span ng-switch="item.description.images.length">
-    <img ng-switch-when="0" ng-src="holder.js/300x161" holder-fix>
-    <img ng-switch-when="1" ng-src="{{ item.description.images[0] }}">
-  </span>
+  <img ng-src="{{ item.description.images['0'] }}">
 </div>
 <div class="item-data">
 <div class="item-details">
-  <p class="item-titles">GUID: <span class="label label-info">{{ item.id }}</span></p><br />
-  <p class="item-titles">Quantity: <span class="label label-info">{{ item.quantity }}</span></p><br />
-  <p class="item-titles">Price: <span class="label label-info">{{ item.price }} SYS</span></p><br />
+  <p class="item-titles">GUID: <span class="label label-info">{{ item.id }}</span></p>
+  <p class="item-titles">Quantity: <span class="label label-info">{{ item.quantity }}</span></p>
+  <p class="item-titles">Price: <span class="label label-info">{{ item.price }} SYS</span></p>
+
+  <span ng-if="item.description.EIN">
+    <p class="item-titles">EIN: <p>{{ item.description.EIN}}</p></p>
+  </span>
+  <span ng-if="item.description.UPC">
+    <p class="item-titles" >UPC: <p>{{ item.description.UPC}}</p></p>
+  </span>
+
+  <span ng-if="item.description.website">
+    <p class="item-titles">Website: </p><p><a href="{{ item.description.website}}">{{ item.description.website}}</a></p>
+  </span>
+
+  <span ng-if="item.description.location">
+    <p class="item-titles">Location: </p><p>{{ item.description.location}}</p>
+  </span>
+
+  <span ng-if="item.description.ship_method">
+    <p class="item-titles" >Shipping Method: <p>{{ item.description.ship_method}}</p></p>
+  </span>
+
+  <span ng-if="item.description.delivery_time">
+    <p class="item-titles" >Delivery Time: <p>{{ item.description.delivery_time}}</p></p>
+  </span>
+
+  <span ng-if="item.description.condition">
+    <p class="item-titles">Condition: <p>{{ item.description.condition}}</p></p>
+  </span>
+
   <p class="item-titles">Description: <p class="lead">{{ item.description.description}}</p></p>
+
   </div>
   <div class="item-btn">
   <a href="syscoin://{{ item.address }}&price={{ item.price }}" class="btn btn-info" role="button" ng-click="buyItem()">Buy Item</a>

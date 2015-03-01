@@ -9,22 +9,18 @@
   <p class="lead" ng-if="items.length == 0">No active items found</p>
   
  	<div class="all-item" ng-repeat="item in items">
-      <div class="all-thumb">
-
-        <span ng-switch="item.description.images.length">
-          <img ng-switch-when="0" ng-src="holder.js/300x161" holder-fix>
-          <img ng-switch-when="1" ng-src="{{ item.description.images[0] }}">
-        </span>
-	  </div>
-        <div class="all-caption">
-          <a href="#/item/{{ item.id }}"><h3>{{ item.title }}</h3></a>
-          <div class="descBox" id="dot1">
-          {{ item.description.description }}
-          </div>
-          <a href="#/item/{{ item.id }}" class="btn btn-info" role="button">More Info</a>
-        </div>
-
+    <div class="all-thumb">
+      <img ng-src="{{ item.description.images['0'] }}">
+    </div>
+    <div class="all-caption">
+      <a href="#/item/{{ item.id }}"><h3>{{ item.title }}</h3></a>
+      <div class="descBox" id="dot1">
+      {{ item.description.description }}
       </div>
+      <a href="#/item/{{ item.id }}" class="btn btn-info" role="button">More Info</a>
+    </div>
+
+  </div>
 
  </div>
 </div>

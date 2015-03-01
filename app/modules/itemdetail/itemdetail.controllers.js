@@ -20,11 +20,17 @@ angular.module('itemdetail.controllers', ['blockmarket.services', 'ui.bootstrap'
         $scope.buyItem = function() {
             var modalInstance = $modal.open({
                 templateUrl: 'app/shared/partials/buyItemModal.tpl.html',
-                controller: 'BuyItemCtrl'
+                controller: 'BuyItemCtrl',
+                resolve:{
+                    item: function () {
+                        return $scope.item;
+                    }
+                }
             });
         }
     }])
-    .controller('BuyItemCtrl', ['$rootScope', '$scope', '$log', '$modalInstance', function ($rootScope, $scope, $log, $modalInstance) {
+    .controller('BuyItemCtrl', ['$rootScope', '$scope', '$log', '$modalInstance', 'item', function ($rootScope, $scope, $log, $modalInstance, item) {
+        $scope.item = item;
         $scope.cancel = function() {
             $modalInstance.dismiss('cancel');
         }
