@@ -1,10 +1,13 @@
 <div>
   <h1>Manage Inventory</h1>
   <div ng-if="authenticated">
-    <div style="text-align:left;">
+    <div style="text-align:left;display:inline;">
       <button style="float:left" type="button" class="btn btn-default btn-sm" ng-click="launchModal('addItem')">
         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Item
       </button>
+    </div>
+    <div style="float:right;display:inline;padding-top:3px;color:black;font-size: 14px">
+      Wallet Balance: <b>{{ balance | number }} SYS</b>
     </div>
     <br /><br />
     <div>
@@ -54,7 +57,7 @@
     </div>
 
     <div ng-if="hasActiveItems === false && hasExpiredItems === false" ng-click="launchModal('addItem')" style="font-size:18px; font-weight: bold; text-align: center">
-      You haven't listed any items yet. Click <a href="#">add item</a> to get started.
+      You haven't listed any items yet. Click <a href="javascript:void(0)">add item</a> to get started.
     </div>
 
     <div ng-show="showExpiredItems === true">
@@ -82,7 +85,7 @@
 </div>
 
 <div ng-if="!authenticated">
-  <form novalidate class="simple-form">
+  <form novalidate class="simple-form" ng-submit="authenticate(user)">
     <div class="form-group">
       <label for="username">Username</label>
       <input type="text" class="form-control" ng-model="user.username" name="username" id="username">
@@ -92,11 +95,13 @@
       <label for="password">Password</label>
       <input type="password" class="form-control" ng-model="user.password" name="password" id="password">
     </div>
+    <input type="submit" style="display:none">
   </form>
   <span style="color:red" ng-if="authFailed">Invalid username/password. Please try again.</span>
 
   <div>
     <button class="btn btn-success" ng-click="authenticate(user)">Login</button>
+
   </div>
 </div>
 

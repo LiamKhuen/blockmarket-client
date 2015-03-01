@@ -1,22 +1,35 @@
 'use strict';
 
-function checkRequiredFields(item) {
-    if(item.name == "" || item.name == undefined)
-        return false;
+function hasRequiredFields(item) {
 
-    if(item.quantity == "" || item.quantity == undefined)
-        return false;
+    console.log("item for verfiication:", item);
 
-    if(item.price == "" || item.price == undefined)
-        return false;
+    if(item.title == "" || item.title == undefined) {
+        return "Must specify a name.";
+    }
 
-    if(item.category == "" || item.category == undefined)
-        return false;
 
-    if(item.description == "" || item.description == undefined)
-        return false;
+    if(item.quantity == "" || item.quantity == undefined) {
+        return "Must specify a quantity.";
+    }
 
-    return true;
+    if(item.price == "" || item.price == undefined) {
+        return "Must specify a price.";
+    }
+
+    if(item.category.length == 0 || item.category == undefined) {
+        return "Must specify a category.";
+    }
+
+    if(item.description.description == "" || item.description.description == undefined)  {
+        return "Must specify a description.";
+    }
+
+    if(item.description.images.length == 0 || item.description.images == undefined)  {
+        return "Must specify an image.";
+    }
+
+    return "";
 }
 
 angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap', 'blockmarket.marketconstants'])
@@ -25,6 +38,7 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
 
         $rootScope.activeView = 'admin'; //sets the style for nav
         $scope.user = {username: "", password: ""};
+        $scope.balance = 0;
 
 
         function hasActiveItems() {
@@ -123,21 +137,31 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
                 $scope.hasActiveItems = hasActiveItems();
                 $scope.hasPendingItems = false;
 
-                $scope.pendingItemBlockHeight = (parseInt($rootScope.currentBlocks) - 6710) * -1;
-                $log.log("Pending item block height (+/- 100 blocks):" + $scope.pendingItemBlockHeight + ", " + $rootScope.currentBlocks);
+                syscoinAPIService.getInfo().then(function(response) {
+                    $rootScope.currentBlocks = response.data.blocks;
+                    $rootScope.pendingItemBlockHeight = $scope.pendingItemBlockHeight = ($rootScope.currentBlocks - 6710) * -1;
+                    $log.log("Pending item block height (+/- 100 blocks):" + $scope.pendingItemBlockHeight + ", " + $rootScope.currentBlocks);
 
 
-                //items that are pending confirmation show an expires_in height of roughtly current_block_height - 6710.
-                //add 100 blocks as a rough buffer.
-                //TODO: think up a way to improve identification of pending items.
-                for(var i = 0; i < $scope.items.length; i++) {
-                    if($scope.items[i].expires_in < 0 && $scope.items[i].expires_in > ($scope.pendingItemBlockHeight - 20) ) {
-                        $scope.items[i].pendingConfirmation = true;
-                        $scope.hasPendingItems = true;
-                    }else{
-                        $scope.items[i].pendingConfirmation = false;
+                    $scope.balance = response.data.balance;
+
+                    //items that are pending confirmation show an expires_in height of roughtly current_block_height - 6710.
+                    //add 100 blocks as a rough buffer.
+                    //TODO: think up a way to improve identification of pending items.
+                    for(var i = 0; i < $scope.items.length; i++) {
+                        var itemPending = $scope.items[i].expires_in > $scope.pendingItemBlockHeight;
+                        $log.log("Is " + $scope.items[i].expires_in + " > " + $scope.pendingItemBlockHeight + " == " + itemPending);
+                        if($scope.items[i].expires_in < 0 && $scope.items[i].expires_in > $scope.pendingItemBlockHeight ) {
+                            $log.log("Found one pending item.");
+                            $scope.items[i].pendingConfirmation = true;
+                            $scope.hasPendingItems = true;
+                        }else{
+                            $scope.items[i].pendingConfirmation = false;
+                        }
                     }
-                }
+                });
+
+
             });
         }
 
@@ -166,7 +190,7 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
                 title: item.title,
                 description: {
                     description: item.description.description,
-                    images: (item.description.images != undefined && item.description.images.length > 0) ? [ item.description.images[0] ] : [],
+                    images: [ item.description.images[0] ],
                     EIN: item.description.EIN,
                     UPC: item.description.UPC,
                     website: item.description.website,
@@ -176,10 +200,10 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
                     condition: item.description.condition
                 },
 
-                category: (item.category != undefined && item.category.length > 0) ? [ item.category[0] ] : []
+                category: [ item.category[0] ]
             };
 
-            if(checkRequiredFields(offer) === true) {
+            if(hasRequiredFields(offer) == "") {
                 $log.log("OFFER:", offer);
 
                 blockmarketService.addItem($rootScope.syscoinAddress, item).then(function(response) {
@@ -188,7 +212,7 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
                     $rootScope.$broadcast(EVENTS.reload_admin);
                 });
             }else{
-                alert("One or more required fields are incomplete. Please populate all fields indicated as required with a '*' before adding a new item.");
+                alert(hasRequiredFields(offer));
             }
         };
 
