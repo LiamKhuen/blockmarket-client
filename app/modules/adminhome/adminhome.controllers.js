@@ -254,7 +254,7 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
                 category: (item.category != undefined && item.category.length > 0) ? [ item.category[0] ] : []
             };
 
-            if(checkRequiredFields(offer) === true) {
+            if(hasRequiredFields(offer) == "") {
                 $log.log("Trying to edit item:", offer);
 
                 blockmarketService.updateItem(item).then(function(response) {
@@ -264,7 +264,7 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
                     $rootScope.$broadcast(EVENTS.reload_admin);
                 });
             }else{
-                alert("One or more required fields are incomplete. Please populate all fields indicated as required with a '*' before submitting item updates.");
+                alert(hasRequiredFields(offer));
             }
         };
 
