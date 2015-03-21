@@ -8,7 +8,6 @@ function hasRequiredFields(item) {
         return "Must specify a name.";
     }
 
-
     if(item.quantity == "" || item.quantity == undefined) {
         return "Must specify a quantity.";
     }
@@ -149,8 +148,8 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
                     //add 100 blocks as a rough buffer.
                     //TODO: think up a way to improve identification of pending items.
                     for(var i = 0; i < $scope.items.length; i++) {
-                        var itemPending = $scope.items[i].expires_in > $scope.pendingItemBlockHeight;
-                        $log.log("Is " + $scope.items[i].expires_in + " > " + $scope.pendingItemBlockHeight + " == " + itemPending);
+                        var isItemPending = $scope.items[i].expires_in > $scope.pendingItemBlockHeight;
+                        $log.log("Is " + $scope.items[i].expires_in + " > " + $scope.pendingItemBlockHeight + " == " + $scope.items[i].value);
                         if($scope.items[i].expires_in < 0 && $scope.items[i].expires_in > $scope.pendingItemBlockHeight ) {
                             $log.log("Found one pending item.");
                             $scope.items[i].pendingConfirmation = true;
@@ -184,24 +183,9 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
             $scope.master = angular.copy(item);
 
             //format the description object according to the spec
-            var offer = {
-                quantity: item.quantity,
-                price: item.price,
-                title: item.title,
-                description: {
-                    description: item.description.description,
-                    images: [ item.description.images[0] ],
-                    EIN: item.description.EIN,
-                    UPC: item.description.UPC,
-                    website: item.description.website,
-                    item_location: item.description.item_location,
-                    delivery_time: item.description.delivery_time,
-                    ship_method: item.description.ship_method,
-                    condition: item.description.condition
-                },
-
-                category: [ item.category[0] ]
-            };
+            var offer = blockmarketService.formatItem(item.title, item.category, item.quantity, item.price, item.description.description,
+                item.description.images, item.description.EIN, item.description.UPC, item.description.website, item.description.deliveryMethod,
+                item.description.itemLocation, item.description.deliveryTime, item.description.shipMethod, item.description.condition);
 
             if(hasRequiredFields(offer) == "") {
                 $log.log("OFFER:", offer);
@@ -235,24 +219,9 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
             $scope.master = angular.copy(item);
 
             //format the description object according to the spec
-            var offer = {
-                quantity: item.quantity,
-                price: item.price,
-                title: item.title,
-                description: {
-                    description: item.description.description,
-                    images: (item.description.images != undefined && item.description.images.length > 0) ? [ item.description.images[0] ] : [],
-                    EIN: item.description.EIN,
-                    UPC: item.description.UPC,
-                    website: item.description.website,
-                    item_location: item.description.item_location,
-                    delivery_time: item.description.delivery_time,
-                    ship_method: item.description.ship_method,
-                    condition: item.description.condition
-                },
-
-                category: (item.category != undefined && item.category.length > 0) ? [ item.category[0] ] : []
-            };
+            var offer = blockmarketService.formatItem(item.title, item.category, item.quantity, item.price, item.description.description,
+                item.description.images, item.description.EIN, item.description.UPC, item.description.website, item.description.deliveryMethod,
+                item.description.itemLocation, item.description.deliveryTime, item.description.shipMethod, item.description.condition);
 
             if(hasRequiredFields(offer) == "") {
                 $log.log("Trying to edit item:", offer);

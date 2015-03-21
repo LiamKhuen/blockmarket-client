@@ -29,12 +29,16 @@
     <p class="item-titles">Location: </p><p>{{ item.description.location}}</p>
   </span>
 
-  <span ng-if="item.description.ship_method">
-    <p class="item-titles" >Shipping Method: <p>{{ item.description.ship_method}}</p></p>
+  <span ng-if="item.description.deliveryMethod">
+    <p class="item-titles" >Delivery Method: <p>{{ item.description.deliveryMethod}}</p></p>
   </span>
 
-  <span ng-if="item.description.delivery_time">
-    <p class="item-titles" >Delivery Time: <p>{{ item.description.delivery_time}}</p></p>
+  <span ng-if="item.description.shipMethod">
+    <p class="item-titles" >Shipping Method: <p>{{ item.description.shipMethod}}</p></p>
+  </span>
+
+  <span ng-if="item.description.deliveryTime">
+    <p class="item-titles" >Delivery Time: <p>{{ item.description.deliveryTime}}</p></p>
   </span>
 
   <span ng-if="item.description.condition">
@@ -45,7 +49,7 @@
 
   </div>
   <div class="item-btn">
-  <a href="syscoin://{{ item.address }}&price={{ item.price }}" class="btn btn-info" role="button" ng-click="buyItem()">Buy Item</a>
+  <button class="btn btn-info" role="button" ng-click="buyItem(item)">Buy Item</button>
   </div>
 </div>
 </div>

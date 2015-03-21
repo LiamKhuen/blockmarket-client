@@ -52,15 +52,15 @@
       </table>
     </div>
 
-    <div ng-if="hasActiveItems === false && hasExpiredItems === true" style="font-size:18px; font-weight: bold; text-align: center">
+    <div ng-if="!hasActiveItems && hasExpiredItems" style="font-size:18px; font-weight: bold; text-align: center">
       All your offers have expired. <a ng-click="toggleExpiredItems()">View expired offers.</a>
     </div>
 
-    <div ng-if="hasActiveItems === false && hasExpiredItems === false" ng-click="launchModal('addItem')" style="font-size:18px; font-weight: bold; text-align: center">
+    <div ng-if="!hasActiveItems && !hasExpiredItems" ng-click="launchModal('addItem')" style="font-size:18px; font-weight: bold; text-align: center">
       You haven't listed any items yet. Click <a href="javascript:void(0)">add item</a> to get started.
     </div>
 
-    <div ng-show="showExpiredItems === true">
+    <div ng-show="showExpiredItems">
       <h3>Expired Items</h3>
       <table class="table table-hover">
         <thead>

@@ -3,28 +3,19 @@
     <h4>Buy Item</h4>
   </div>
   <style>
-    .danText {
-      text-align: center;
-      font-size: 14px;
-      color:#666666;
-    }
 
-    .danText2 {
-      text-align: center;
-      font-size: 18px;
-      color:#666666;
-    }
 
   </style>
   <div class="modal-body">
-    <p class="danText">Purchasing items is temporarily disabled until end-to-end encryption is implemented for user privacy.</p>
-
+    <alert type="danger" style="font-size: 11px">Please note, your information is not currently encrypted when being sent to the payment page.
+      It is highly recommeneded that you used <a href="">PGP Encryption</a> on all of your information until native encryption is implemented in Blockmarket.</alert>
     <p class="danText">If you would like to test purchasing an item, open up the <b>Syscoin Blockmarket Beta 2 wallet</b> and paste the GUID
     below into the 'Marketplace' tab. Lookup the offer and follow the in-wallet instructions to complete the test-purchase.</p>
 
-    <h3 style="text-align: center;color: #666666">{{ item.id }}</h3>
+    <h3 style="color: #666666">{{ item.title }}</h3>
 
-    <p>Please Note: This experience will be improved in Blockmarket Beta3</p>
+    <ng-if="item.descrption.deliveryMethod == "
+
   </div>
   <div class="modal-footer">
     <button class="btn" ng-click="cancel()">Ok</button>

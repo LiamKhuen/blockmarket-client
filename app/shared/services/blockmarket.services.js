@@ -173,6 +173,32 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             return deferred.promise;
         }
 
+        //formats an item description according to the official JSON offer spec
+        function formatItem(title, category, quantity, price, description, images, EIN, UPC, website, deliveryMethod, itemLocation, deliveryTime, shipMethod, condition) {
+            //format the description object according to the spec
+            var item = {
+                quantity: quantity,
+                price: price,
+                title: title,
+                description: {
+                    description: description,
+                    images: [ images[0] ], /* only support a single image for now, wrapped in array for multi image support later */
+                    EIN: EIN,
+                    UPC: UPC,
+                    website: website,
+                    deliveryMethod: deliveryMethod,
+                    location: item.description.location,
+                    deliveryTime: item.description.deliveryTime,
+                    shipMethod: item.description.shipMethod,
+                    condition: item.description.condition
+                },
+
+                category: [ category[0] ] /* only support a single category for now, but wrap in array for later extended support for multuple categories */
+            };
+
+            return item;
+        }
+
 //        //parses the item responses once asynchronously returned
 //        function parseItemResponses(responses) {
 //            var items = new Array();
@@ -239,7 +265,8 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             getItemList: getItemList,
             addItem: addItem,
             updateItem: updateItem,
-            renewItem: renewItem
+            renewItem: renewItem,
+            formatItem: formatItem
         }
 
     }]);
