@@ -33,7 +33,7 @@
 
         <div class="form-group">
           <label for="itemQuantity">Quantity:</label>
-          <input type="text" class="form-control" ng-model="purchase.itemQuantity" name="itemQuantity" ng-change="updateURI()">
+          <input type="text" class="form-control" ng-model="purchase.itemQuantity" name="itemQuantity" ng-blur="updateURI()">
         </div>
 
       </form>
@@ -43,7 +43,7 @@
 
   </div>
   <div class="modal-footer">
-    <a href="syscoin:{{ purchase.uri }}" class="btn btn-success">Purchase Now</a>&nbsp;&nbsp;
+    <a href="syscoin:{{ purchase.uri }}" class="btn btn-success" ng-disabled="!purchaseFieldsValid">Purchase Now</a>&nbsp;&nbsp;
     <a href="" class="btn" ng-click="cancel()">Cancel</a>
   </div>
 </div>

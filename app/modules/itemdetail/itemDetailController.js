@@ -40,6 +40,7 @@ angular.module('itemdetail.controllers', ['blockmarket.services', 'ui.bootstrap'
     }])
     .controller('BuyItemCtrl', ['$rootScope', '$scope', '$log', '$modalInstance', '$timeout', 'item', function ($rootScope, $scope, $log, $modalInstance, $timeout, item) {
         $scope.item = item;
+        $scope.purchaseFieldsValid = true;
 
         $scope.purchase = {
             itemQuantity: 1,
@@ -50,16 +51,23 @@ angular.module('itemdetail.controllers', ['blockmarket.services', 'ui.bootstrap'
         }
 
         $scope.updateURI = function() {
-            var notes = "Buyer Email: " + $scope.purchase.buyerEmail + "\n";
-            notes += "Shipping Address: " + $scope.purchase.buyerAddress + "\n";
-            notes += "Buyer Note: " + $scope.purchase.buyerNote;
+            var notes = ""
+            if($scope.purchase.buyerEmail != "") note += "Buyer Email: " + $scope.purchase.buyerEmail + "\n";
+            if($scope.purchase.buyerAddress != "") notes += "Shipping Address: " + $scope.purchase.buyerAddress + "\n";
+            if($scope.purchase.buyerNote != "") notes += "Buyer Note: " + $scope.purchase.buyerNote;
 
             var uri = item.id + "?notes=" + notes + "&quantity=" + $scope.purchase.itemQuantity;
             uri = encodeURI(uri);
 
-           // alert("FULL URI:" + uri);
             $log.log("Updated URI:" + uri);
             $scope.purchase.uri = uri;
+
+            if($scope.purchase.itemQuantity == "" || parseInt($scope.purchase.itemQuantity) <= 0 || parseInt($scope.purchase.itemQuantity) > $scope.item.quantity) {
+                alert("Must enter a quantity that is greater than 0 and less than " + $scope.item.quantity + ".");
+                $scope.purchaseFieldsValid = false;
+            }else{
+                $scope.purchaseFieldsValid = true;
+            }
         }
 
         $scope.cancel = function() {
