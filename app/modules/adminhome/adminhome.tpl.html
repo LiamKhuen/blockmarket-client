@@ -55,7 +55,7 @@
       All your offers have expired. <a ng-click="toggleExpiredItems()">View expired offers.</a>
     </div>
 
-    <div ng-if="!hasActiveItems && !hasExpiredItems" ng-click="launchModal('addItem')" style="font-size:18px; font-weight: bold; text-align: center">
+    <div ng-if="!hasActiveItems && !hasExpiredItems && !hasPendingItems" ng-click="launchModal('addItem')" style="font-size:18px; font-weight: bold; text-align: center">
       You haven't listed any items yet. Click <a href="javascript:void(0)">add item</a> to get started.
     </div>
 

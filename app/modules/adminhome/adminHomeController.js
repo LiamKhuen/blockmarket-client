@@ -62,7 +62,7 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
 
         function hasExpiredItems() {
             for(var i = 0; i < $scope.items.length; i++) {
-                if($scope.items[i].expired == 0) {
+                if($scope.items[i].expired == 1) {
                     return true;
                 }
             }
@@ -148,6 +148,10 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
                 $scope.hasExpiredItems = hasExpiredItems();
                 $scope.hasActiveItems = hasActiveItems();
                 $scope.hasPendingItems = hasPendingItems();
+
+                syscoinAPIService.getInfo().then(function(response) {
+                    $scope.balance = response.data.balance;
+                });
             });
         }
 

@@ -52,7 +52,7 @@ angular.module('itemdetail.controllers', ['blockmarket.services', 'ui.bootstrap'
 
         $scope.updateURI = function() {
             var notes = ""
-            if($scope.purchase.buyerEmail != "") note += "Buyer Email: " + $scope.purchase.buyerEmail + "\n";
+            if($scope.purchase.buyerEmail != "") notes += "Buyer Email: " + $scope.purchase.buyerEmail + "\n";
             if($scope.purchase.buyerAddress != "") notes += "Shipping Address: " + $scope.purchase.buyerAddress + "\n";
             if($scope.purchase.buyerNote != "") notes += "Buyer Note: " + $scope.purchase.buyerNote;
 
