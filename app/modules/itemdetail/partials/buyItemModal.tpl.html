@@ -2,22 +2,48 @@
   <div class="modal-header">
     <h4>Buy Item</h4>
   </div>
-  <style>
 
-
-  </style>
   <div class="modal-body">
-    <alert type="danger" style="font-size: 11px">Please note, your information is not currently encrypted when being sent to the payment page.
+    <alert type="danger" style="font-size: 14px">Please note, your information is not currently encrypted when being sent to the payment page.
       It is highly recommeneded that you used <a href="">PGP Encryption</a> on all of your information until native encryption is implemented in Blockmarket.</alert>
-    <p class="danText">If you would like to test purchasing an item, open up the <b>Syscoin Blockmarket Beta 2 wallet</b> and paste the GUID
-    below into the 'Marketplace' tab. Lookup the offer and follow the in-wallet instructions to complete the test-purchase.</p>
+
+    <p>Please fill out the form below and press "Purchase Now" to complete the purchase using your local wallet.</p>
 
     <h3 style="color: #666666">{{ item.title }}</h3>
 
-    <ng-if="item.descrption.deliveryMethod == "
+    <div>
+      <form novalidate class="simple-form">
+
+        <div class="form-group">
+          <label for="buyerEmail">Email (encryption recommended):</label>
+          <input type="text" class="form-control" ng-model="purchase.buyerEmail" name="buyerEmail" ng-change="updateURI()">
+        </div>
+
+        <div class="form-group" ng-if="item.description.deliveryMethod == 'PHYSICAL' || !item.description.deliveryMethod">
+          <label for="buyerAddress">Address (encryption recommended):</label>
+          <textarea ng-model="purchase.buyerAddress" class="form-control" name="buyerAddress" rows="3"  placeholder="Shipping Address" ng-change="updateURI()"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="buyerNote">Note (encryption recommended):</label>
+          <textarea ng-model="purchase.buyerNote" class="form-control" name="buyerNote" rows="3"  placeholder="Note to Seller" ng-change="updateURI()"></textarea>
+        </div>
+
+        <hr />
+
+        <div class="form-group">
+          <label for="itemQuantity">Quantity:</label>
+          <input type="text" class="form-control" ng-model="purchase.itemQuantity" name="itemQuantity" ng-change="updateURI()">
+        </div>
+
+      </form>
+    </div>
+
+    <h3>Total: {{ item.price * purchase.itemQuantity }}</h3>
 
   </div>
   <div class="modal-footer">
-    <button class="btn" ng-click="cancel()">Ok</button>
+    <a href="syscoin:{{ purchase.uri }}" class="btn btn-success">Purchase Now</a>&nbsp;&nbsp;
+    <a href="" class="btn" ng-click="cancel()">Cancel</a>
   </div>
 </div>

@@ -28,7 +28,7 @@ angular.module('itemdetail.controllers', ['blockmarket.services', 'ui.bootstrap'
 
         $scope.buyItem = function() {
             var modalInstance = $modal.open({
-                templateUrl: 'app/shared/partials/buyItemModal.tpl.html',
+                templateUrl: 'app/modules/itemdetail/partials/buyItemModal.tpl.html',
                 controller: 'BuyItemCtrl',
                 resolve:{
                     item: function () {
@@ -38,8 +38,29 @@ angular.module('itemdetail.controllers', ['blockmarket.services', 'ui.bootstrap'
             });
         }
     }])
-    .controller('BuyItemCtrl', ['$rootScope', '$scope', '$log', '$modalInstance', 'item', function ($rootScope, $scope, $log, $modalInstance, item) {
+    .controller('BuyItemCtrl', ['$rootScope', '$scope', '$log', '$modalInstance', '$timeout', 'item', function ($rootScope, $scope, $log, $modalInstance, $timeout, item) {
         $scope.item = item;
+
+        $scope.purchase = {
+            itemQuantity: 1,
+            buyerEmail: "",
+            buyerAddress: "",
+            buyerNote: "",
+            uri: ""
+        }
+
+        $scope.updateURI = function() {
+            var notes = "Buyer Email: " + $scope.purchase.buyerEmail + "\n";
+            notes += "Shipping Address: " + $scope.purchase.buyerAddress + "\n";
+            notes += "Buyer Note: " + $scope.purchase.buyerNote;
+
+            var uri = item.id;
+
+           // alert("FULL URI:" + uri);
+            $log.log("Updated URI:" + uri);
+            $scope.purchase.uri = uri;
+        }
+
         $scope.cancel = function() {
             $modalInstance.dismiss('cancel');
         }
