@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.marketconstants', 'angular-syscoin-api'])
-    .service('blockmarketService', ['$http', '$timeout', '$q', 'HOST', 'FEATURED_ITEMS', 'syscoinAPIService', '$log', 'EVENTS', '$rootScope', function($http, $timeout, $q, HOST, FEATURED_ITEMS, syscoinAPIService, $log, EVENTS, $rootScope) {
+    .service('blockmarketService', ['$http', '$timeout', '$q', 'FEATURED_ITEMS', 'syscoinAPIService', '$log', 'EVENTS', '$rootScope',
+        function($http, $timeout, $q, FEATURED_ITEMS, syscoinAPIService, $log, EVENTS, $rootScope) {
 
         var _categories = [];
         var _allItems = [];
@@ -64,7 +65,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
                     //iterate over offers and get the full data of non expired offers
                     for(var i = 0; i < offers.data.length; i++) {
                         //if the offer is not expired, add it to the queue to get full data on it
-                        if (offers.data[i].expired == undefined) {
+                        if (offers.data[i].expired == 0 && offers.data[i].pending == 0) {
                             $log.log("Adding item: ", offers.data[i]);
                             _itemGuids.push(offers.data[i].name);
 
@@ -110,7 +111,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
                 //iterate over offers and get the full data of non expired offers
                 for(var i = 0; i < offers.data.length; i++) {
                     //if the offer is not expired, add it to the queue to get full data on it
-                    if (offers.data[i].expired == 0) {
+                    if (offers.data[i].pending == 0 && offers.data[i].pending == 0) {
                         $log.log("Adding item: ", offers.data[i]);
                         _itemGuids.push(offers.data[i].name);
 
@@ -174,7 +175,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
         }
 
         //formats an item description according to the official JSON offer spec
-        function formatItem(title, category, quantity, price, description, images, EIN, UPC, website, deliveryMethod, itemLocation, deliveryTime, shipMethod, condition) {
+        function formatItem(title, category, quantity, price, description, images, EIN, UPC, website, deliveryMethod, location, deliveryTime, shipMethod, condition) {
             //format the description object according to the spec
             var item = {
                 quantity: quantity,
@@ -187,10 +188,10 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
                     UPC: UPC,
                     website: website,
                     deliveryMethod: deliveryMethod,
-                    location: item.description.location,
-                    deliveryTime: item.description.deliveryTime,
-                    shipMethod: item.description.shipMethod,
-                    condition: item.description.condition
+                    location: location,
+                    deliveryTime: deliveryTime,
+                    shipMethod: shipMethod,
+                    condition: condition
                 },
 
                 category: [ category[0] ] /* only support a single category for now, but wrap in array for later extended support for multuple categories */

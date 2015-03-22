@@ -32,8 +32,8 @@ function hasRequiredFields(item) {
 }
 
 angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap', 'blockmarket.marketconstants'])
-    .controller('AdminCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modal', '$log', 'EVENTS', 'syscoinAPIService',
-        function ($rootScope, $scope, $q, blockmarketService, $modal, $log, EVENTS, syscoinAPIService) {
+    .controller('AdminCtrl', ['$rootScope', '$scope', '$q', '$cookies', 'blockmarketService', '$modal', '$log', 'EVENTS', 'syscoinAPIService',
+        function ($rootScope, $scope, $q, $cookies, blockmarketService, $modal, $log, EVENTS, syscoinAPIService) {
 
         $rootScope.activeView = 'admin'; //sets the style for nav
         $scope.user = {username: "", password: ""};
@@ -42,7 +42,17 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
 
         function hasActiveItems() {
             for(var i = 0; i < $scope.items.length; i++) {
-                if(parseInt($scope.items[i].expires_in) > 0) {
+                if($scope.items[i].expired == 0 && $scope.items[i].pending == 0) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        function hasPendingItems() {
+            for(var i = 0; i < $scope.items.length; i++) {
+                if($scope.items[i].expired == 0 && $scope.items[i].pending == 1) {
                     return true;
                 }
             }
@@ -52,7 +62,7 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
 
         function hasExpiredItems() {
             for(var i = 0; i < $scope.items.length; i++) {
-                if(parseInt($scope.items[i].expires_in) < 0) {
+                if($scope.items[i].expired == 0) {
                     return true;
                 }
             }
@@ -60,11 +70,12 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
             return false;
         }
 
-        $scope.authenticated = $rootScope.authenticated;
+        $scope.authenticated = $rootScope.authenticated = $cookies.authenticated;
         $scope.authFailed = false;
         $scope.authenticate = function(user) {
             syscoinAPIService.authenticate(user.username, user.password).then(function(response) {
                 $log.log("Auth result: ", response);
+                $cookies.authenticated = true;
                 $scope.authenticated = response.data.authenticated === true;
                 if($scope.authenticated !== true) {
                     $scope.authFailed = true;
@@ -74,7 +85,7 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
             });
         }
 
-        $scope.launchModal = function(modalType, itemGuid) {
+        $scope.launchModal = function(modalType, itemGuid, recreateItem) {
             $log.log("itemGuid:" + itemGuid);
             switch(modalType) {
                 case 'addItem':
@@ -84,6 +95,9 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
                         resolve: {
                             popupTitle: function () {
                                 return "Add Item";
+                            },
+                            itemGuid: function () { //if we're recreating an item, pass back the guid to recreate from
+                                return recreateItem ? itemGuid : null;
                             }
                         }
                     });
@@ -129,38 +143,11 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
 
         function reloadItems() {
             blockmarketService.getItemList().then(function(offers) {
-
                 $log.log("all offers: ", offers);
                 $scope.items = offers;
                 $scope.hasExpiredItems = hasExpiredItems();
                 $scope.hasActiveItems = hasActiveItems();
-                $scope.hasPendingItems = false;
-
-                syscoinAPIService.getInfo().then(function(response) {
-                    $rootScope.currentBlocks = response.data.blocks;
-                    $rootScope.pendingItemBlockHeight = $scope.pendingItemBlockHeight = ($rootScope.currentBlocks - 6710) * -1;
-                    $log.log("Pending item block height (+/- 100 blocks):" + $scope.pendingItemBlockHeight + ", " + $rootScope.currentBlocks);
-
-
-                    $scope.balance = response.data.balance;
-
-                    //items that are pending confirmation show an expires_in height of roughtly current_block_height - 6710.
-                    //add 100 blocks as a rough buffer.
-                    //TODO: think up a way to improve identification of pending items.
-                    for(var i = 0; i < $scope.items.length; i++) {
-                        var isItemPending = $scope.items[i].expires_in > $scope.pendingItemBlockHeight;
-                        $log.log("Is " + $scope.items[i].expires_in + " > " + $scope.pendingItemBlockHeight + " == " + $scope.items[i].value);
-                        if($scope.items[i].expires_in < 0 && $scope.items[i].expires_in > $scope.pendingItemBlockHeight ) {
-                            $log.log("Found one pending item.");
-                            $scope.items[i].pendingConfirmation = true;
-                            $scope.hasPendingItems = true;
-                        }else{
-                            $scope.items[i].pendingConfirmation = false;
-                        }
-                    }
-                });
-
-
+                $scope.hasPendingItems = hasPendingItems();
             });
         }
 
@@ -172,25 +159,34 @@ angular.module('adminhome.controllers', ['blockmarket.services', 'ui.bootstrap',
         })
 
     }])
-    .controller('AddItemCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modalInstance', '$log', 'popupTitle','EVENTS', function ($rootScope, $scope, $q, blockmarketService, $modalInstance, $log, popupTitle, EVENTS) {
+    .controller('AddItemCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', '$modalInstance', '$log', 'itemGuid', 'popupTitle','EVENTS', function ($rootScope, $scope, $q, blockmarketService, $modalInstance, $log, itemGuid, popupTitle, EVENTS) {
         $rootScope.activeView = 'admin'; //sets the style for nav
 
         $scope.title = popupTitle;
 
+        if(itemGuid != null) {
+            blockmarketService.getItem(itemGuid).then(function(item) {
+                $scope.item = item;
+            });
+        }
+
         $scope.master = {};
 
         $scope.addItem = function(item) {
-            $scope.master = angular.copy(item);
+            $scope.master = angular.copy(item)
+            $log.log("adding:", item);
 
             //format the description object according to the spec
             var offer = blockmarketService.formatItem(item.title, item.category, item.quantity, item.price, item.description.description,
                 item.description.images, item.description.EIN, item.description.UPC, item.description.website, item.description.deliveryMethod,
-                item.description.itemLocation, item.description.deliveryTime, item.description.shipMethod, item.description.condition);
+                item.description.location, item.description.deliveryTime, item.description.shipMethod, item.description.condition);
+
+            $log.log("ADDING:", offer);
 
             if(hasRequiredFields(offer) == "") {
                 $log.log("OFFER:", offer);
 
-                blockmarketService.addItem($rootScope.syscoinAddress, item).then(function(response) {
+                blockmarketService.addItem($rootScope.syscoinAddress, offer).then(function(response) {
                     alert("Item Successfully Added! Please allow one confirmation for the item to be reflected in the table. Until its confirmed it will display as expired.");
                     $modalInstance.dismiss('cancel');
                     $rootScope.$broadcast(EVENTS.reload_admin);

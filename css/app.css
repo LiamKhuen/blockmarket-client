@@ -124,10 +124,6 @@ h1 {
 	text-shadow:none;
 }
 
-.ng-binding {
-	height: 40px;
-}
-
 .btn-orange {
 	color: #ffffff;
 	background-color: #ff6600;
@@ -160,6 +156,7 @@ h1 {
 .category-side {
 	width: 20%;
 	float:left;
+    padding-right: 20px;
 }
 
 .all-items-border {
@@ -278,4 +275,21 @@ h1 {
 
 .modal-body {
 	background-color:#FFF;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    background-color: #f5f5f5;
 }

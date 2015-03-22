@@ -26,12 +26,11 @@
         <td ng-click="launchModal('editItem', item.name)">{{ item.value }}</td>
         <td>{{ item.name }}</td>
         <td>{{ item.expires_in }}</td>
-        <td ng-click="launchModal('renewItem', item.name)"><a href="javascript:void(0)">renew</a></td>
       </tr>
       </tbody>
     </table>
 
-    <div ng-if="hasPendingItems === true">
+    <div ng-if="hasPendingItems">
       <h3>Items Pending Confirmation</h3>
       <table class="table table-hover">
         <thead>
@@ -42,10 +41,10 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="item in items | orderBy: 'expires_in' : reverse=true" ng-if="item.pendingConfirmation === true">
+        <tr ng-repeat="item in items | orderBy: 'expires_in' : reverse=true" ng-if="item.pending">
           <td>{{ item.value }}</td>
           <td>{{ item.name }}</td>
-          <td>{{ item.expires_in }}</td>
+          <td>{{ item.pending }}</td>
           <td>Waiting for confirmations...</td>
         </tr>
         </tbody>

@@ -3,13 +3,15 @@
 // Declare app level module which depends on filters, and services
 var app = angular.module('blockmarket', [
     'ngRoute',
+    'ngCookies',
     'adminhome.controllers',
     'home.controllers',
     'allitems.controllers',
     'itemdetail.controllers',
     'global.directives',
     'blockmarket.services',
-    'blockmarket.categorylist'
+    'blockmarket.categorylist',
+    'blockmarket.appconfig'
 ])
 .config(['$routeProvider', '$compileProvider', function($routeProvider, $compileProvider) {
     $routeProvider.when('/', { controller:'HomeCtrl', templateUrl:'app/modules/home/home.tpl.html'});
@@ -21,10 +23,11 @@ var app = angular.module('blockmarket', [
     //from: http://stackoverflow.com/questions/15606751/angular-changes-urls-to-unsafe-in-extension-page
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|file|blob|ftp|mailto|c‌​hrome-extension|syscoin):/);
     // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
-}]).run(['$rootScope', '$log', 'blockmarketService', 'syscoinAPIService',
-        function($rootScope, $log, blockmarketService, syscoinAPIService, $cookies){
+}]).run(['$rootScope', '$log', 'blockmarketService', 'syscoinAPIService', '$cookies', 'APP_CONFIG',
+        function($rootScope, $log, blockmarketService, syscoinAPIService, $cookies, APP_CONFIG){
 
-    $rootScope.authenticated = false;
+    $rootScope.authenticated = $cookies.authenticated ? true : false;
+    $rootScope.version = APP_CONFIG.VERSION;
 
     syscoinAPIService.getAccountAddress("").then(function(response) {
         $log.log("Root address:", response.data);
