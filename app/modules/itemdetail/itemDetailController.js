@@ -54,7 +54,8 @@ angular.module('itemdetail.controllers', ['blockmarket.services', 'ui.bootstrap'
             notes += "Shipping Address: " + $scope.purchase.buyerAddress + "\n";
             notes += "Buyer Note: " + $scope.purchase.buyerNote;
 
-            var uri = item.id;
+            var uri = item.id + "?notes=" + notes + "&quantity=" + $scope.purchase.itemQuantity;
+            uri = encodeURI(uri);
 
            // alert("FULL URI:" + uri);
             $log.log("Updated URI:" + uri);
