@@ -41,6 +41,8 @@ angular.module('itemdetail.controllers', ['blockmarket.services', 'ui.bootstrap'
     .controller('BuyItemCtrl', ['$rootScope', '$scope', '$log', '$modalInstance', '$timeout', 'item', function ($rootScope, $scope, $log, $modalInstance, $timeout, item) {
         $scope.item = item;
         $scope.purchaseFieldsValid = true;
+        $scope.showBackupForm = false;
+        $scope.fullBuyerNote = "";
 
         $scope.purchase = {
             itemQuantity: 1,
@@ -50,11 +52,18 @@ angular.module('itemdetail.controllers', ['blockmarket.services', 'ui.bootstrap'
             uri: ""
         }
 
+        $scope.showBackup = function(show) {
+            $log.log("showbackup");
+            $scope.showBackupForm = true;
+        }
+
         $scope.updateURI = function() {
             var notes = ""
             if($scope.purchase.buyerEmail != "") notes += "Buyer Email: " + $scope.purchase.buyerEmail + "\n";
             if($scope.purchase.buyerAddress != "") notes += "Shipping Address: " + $scope.purchase.buyerAddress + "\n";
             if($scope.purchase.buyerNote != "") notes += "Buyer Note: " + $scope.purchase.buyerNote;
+
+            $scope.fullBuyerNote = notes;
 
             var uri = item.id + "?notes=" + notes + "&quantity=" + $scope.purchase.itemQuantity;
             uri = encodeURI(uri);

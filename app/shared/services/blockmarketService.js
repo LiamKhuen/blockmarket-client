@@ -111,7 +111,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
                 //iterate over offers and get the full data of non expired offers
                 for(var i = 0; i < offers.data.length; i++) {
                     //if the offer is not expired, add it to the queue to get full data on it
-                    if (offers.data[i].pending == 0 && offers.data[i].pending == 0) {
+                    if (offers.data[i].expired == 0 && offers.data[i].pending == 0) {
                         $log.log("Adding item: ", offers.data[i]);
                         _itemGuids.push(offers.data[i].name);
 

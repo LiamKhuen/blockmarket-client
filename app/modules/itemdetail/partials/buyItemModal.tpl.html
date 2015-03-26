@@ -1,3 +1,11 @@
+<style>
+  .showForm {
+    color: #888888;
+    font-size: 11px;
+    margin: 5px 0 5px 0;
+  }
+
+</style>
 <div modal="showModal" close="cancel()">
   <div class="modal-header">
     <h4>Buy Item</h4>
@@ -43,7 +51,26 @@
 
   </div>
   <div class="modal-footer">
-    <a href="syscoin:{{ purchase.uri }}" class="btn btn-success" ng-disabled="!purchaseFieldsValid">Purchase Now</a>&nbsp;&nbsp;
+    <a href="syscoin:{{ purchase.uri }}" class="btn btn-success" ng-disabled="!purchaseFieldsValid">Purchase Now</a>&nbsp;
+    <a href="javascript:void(0);" ng-click="showBackup(true)" class="showForm">Pay Button not working?</a>
+    &nbsp;&nbsp;&nbsp;
     <a href="" class="btn" ng-click="cancel()">Cancel</a>
+    <div ng-if="showBackupForm" class="showForm" style="color:white;margin-top:10px;text-align: left" >
+      Problems purchasing using URI schemes? Use the inputs below to quickly purchase the item via your local wallet. Simply copy the Item GUID into the local wallet,
+      press "Lookup Offer" and then paste the Buyer Note into the "Notes" textfield your wallet, populate a quantity and then click "Accept Offer".
+
+      <form novalidate class="simple-form">
+
+        <div class="form-group">
+          <label for="itemGUID">Item GUID:</label>
+          <input type="text" class="form-control" ng-model="item.id" id="itemGUID" disabled>
+        </div>
+
+        <div class="form-group">
+          <label for="buyerNote">Buyer Note (encryption recommended):</label>
+          <textarea class="form-control" id="buyerNote" rows="6" disabled>{{ fullBuyerNote }}</textarea>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
