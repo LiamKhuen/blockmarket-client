@@ -11,10 +11,12 @@ var app = angular.module('blockmarket', [
     'global.directives',
     'blockmarket.services',
     'blockmarket.categorylist',
-    'blockmarket.appconfig'
+    'blockmarket.appconfig',
+    'pgp.controllers'
 ])
 .config(['$routeProvider', '$compileProvider', function($routeProvider, $compileProvider) {
     $routeProvider.when('/', { controller:'HomeCtrl', templateUrl:'app/modules/home/home.tpl.html'});
+    $routeProvider.when('/pgp', { controller:'PGPCtrl', templateUrl:'app/modules/pgp/pgp.tpl.html'});
     $routeProvider.when('/admin', { controller:'AdminCtrl', templateUrl:'app/modules/adminhome/adminhome.tpl.html'});
     $routeProvider.when('/items', { controller:'AllItemsCtrl', templateUrl:'app/modules/allitems/allitems.tpl.html'});
     $routeProvider.when('/item/:guid', { controller:'ItemDetailCtrl', templateUrl:'app/modules/itemdetail/itemdetail.tpl.html'});
