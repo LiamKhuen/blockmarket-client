@@ -7,7 +7,11 @@
 
 <div class="item-img">
   <img ng-src="{{ item.description.images['0'] }}">
+  <div class="item-btn">
+  <button class="btn btn-info" role="button" ng-click="buyItem(item)">Buy Item</button>
+  </div>
 </div>
+
 <div class="item-data">
 <div class="item-details">
   <p class="item-titles">GUID: <span class="label label-info">{{ item.id }}</span></p>
@@ -21,6 +25,8 @@
     <p class="item-titles" >UPC: <p>{{ item.description.UPC}}</p></p>
   </span>
 
+	<p class="item-titles">Description: <p class="lead">{{ item.description.description}}</p></p>
+	
   <span ng-if="item.description.website">
     <p class="item-titles">Website: </p><p><a href="{{ item.description.website}}">{{ item.description.website}}</a></p>
   </span>
@@ -45,11 +51,9 @@
     <p class="item-titles">Condition: <p>{{ item.description.condition}}</p></p>
   </span>
 
-  <p class="item-titles">Description: <p class="lead">{{ item.description.description}}</p></p>
+  
 
   </div>
-  <div class="item-btn">
-  <button class="btn btn-info" role="button" ng-click="buyItem(item)">Buy Item</button>
-  </div>
+  
 </div>
 </div>

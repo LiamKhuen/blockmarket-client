@@ -192,19 +192,20 @@ h1 {
 }
 
 .ng-binding {
-	height: 40px;
+	/*height: 40px;*/
 }
 
 .btn {
 	margin-left:auto;
 	margin-right:auto;
 	display:block;
+	width:100%;
 }
 
 .all-thumb {
     text-align: center;
     background-color: #FFFFFF;
-    height: 150px;
+    height: 180px;
     overflow: hidden;
 }
 
@@ -242,6 +243,13 @@ h1 {
 	float:right;
 }
 
+p.ng-binding {
+	overflow: hidden;
+   text-overflow: ellipsis;
+   display: -webkit-box;
+   -webkit-box-orient: vertical;
+}
+
 .item-titles {
 	font-size:20px;
 	text-align:left;
@@ -257,8 +265,8 @@ h1 {
 
 .item-btn {
 	min-height:20px;
-	margin-top:-5px;
-	width:100px;
+	margin-top:15px;
+	width:300px;
 }
 
 .btn-left {
@@ -292,4 +300,23 @@ body {
     /* Set the fixed height of the footer here */
     height: 60px;
     background-color: #f5f5f5;
+}
+
+/* Mobile Responsive and Awesomeness */
+
+@media only screen 
+  and (min-device-width: 320px) 
+  and (max-device-width: 568px)
+  {
+ 
+.h1 {
+	font-size:12px !important;
+}
+
+.category-side {
+	/* width: 20%; */
+  /* float: left; */
+  
+}
+ 
 }
