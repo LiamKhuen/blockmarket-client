@@ -7,9 +7,9 @@ angular.module('global.directives', ['blockmarket.services'])
                 Holder.run({ images: element[0], nocss: true });
             }
         };
-    });
+    })
 
-app.directive('targetBlank', function() {
+    .directive('targetBlank', function() {
     return {
         compile: function(element) {
             var elems = (element.prop("tagName") === 'A') ? element : element.find('a');

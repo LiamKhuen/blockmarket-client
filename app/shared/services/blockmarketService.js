@@ -4,7 +4,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
     .service('blockmarketService', ['$http', '$timeout', '$q', 'FEATURED_ITEMS', 'syscoinAPIService', '$log', 'EVENTS', '$rootScope',
         function($http, $timeout, $q, FEATURED_ITEMS, syscoinAPIService, $log, EVENTS, $rootScope) {
 
-        var _categories = [];
+        var _categories = null;
         var _allItems = [];
         var _itemGuids = [];
 
@@ -14,14 +14,10 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
                 $log.log("OfferNew result:" , response);
 
                 if(response.data) {
-                    $log.log("Activating offer:" + response.data[1]);
-                    syscoinAPIService.offerActivate(response.data[1]).then(function(response) {
-                        $log.log("OfferActivate result: ", response);
-                        if(response.data)
-                            deferred.resolve(response.data);
-
-                        deferred.reject(response);
-                    });
+                    $log.log("Offer created:" + response.data);
+                    deferred.resolve(response.data);
+                }else{
+                    deferred.reject(response);
                 }
             });
 
@@ -57,36 +53,21 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
 
         function getCategories() {
             $log.log("GET CATEGORIES" + _categories.length);
-            if(_categories.length == 0 ) {
+            if(_categories == null) {
+                _categories = [];
                 $log.log("Something should be done to fetch the categories.");
-                var itemGuidsToFetch = [];
-                var _this = this;
-                syscoinAPIService.offerList().then(function(offers) {
-                    //iterate over offers and get the full data of non expired offers
-                    for(var i = 0; i < offers.data.length; i++) {
-                        //if the offer is not expired, add it to the queue to get full data on it
-                        if (offers.data[i].expired == 0 && offers.data[i].pending == 0) {
-                            $log.log("Adding item: ", offers.data[i]);
-                            _itemGuids.push(offers.data[i].name);
+                var promises = this.getAllItems();
 
-                            itemGuidsToFetch.push(offers.data[i].name);
-                        }
-                    }
-
-                    $log.log("Total items for categories: " + itemGuidsToFetch.length);
-
-                    var promises = [];
-                    for(i = 0; i < itemGuidsToFetch.length; i++) {
-                        promises.push(_this.getItem(itemGuidsToFetch[i]));
-                    }
-
-                    $q.all(promises).then(function(items) {
-                        $rootScope.$broadcast(EVENTS.all_categories_loaded, _categories);
-                    })
+                $q.all(promises).then(function(items) {
+                    $rootScope.$broadcast(EVENTS.all_categories_loaded, _categories);
                 });
             }else{
                 return _categories;
             }
+        }
+
+        function getCachedCategories() {
+            return _categories;
         }
 
         function getFeaturedItems() {
@@ -106,8 +87,9 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
         function getAllItems() {
             var itemGuidsToFetch = [];
 
+            $log.info("GETALL:", this);
             var _this = this;
-            syscoinAPIService.offerList().then(function(offers) {
+            var promises = syscoinAPIService.offerList().then(function(offers) {
                 //iterate over offers and get the full data of non expired offers
                 for(var i = 0; i < offers.data.length; i++) {
                     //if the offer is not expired, add it to the queue to get full data on it
@@ -128,50 +110,87 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
 
                 $q.all(promises).then(function(items) {
                     _allItems = items;
-                    $rootScope.$broadcast(EVENTS.all_items_loaded, items);
-                })
-            });
-        }
+                    var formattedItems = [];
 
+                    //remove null items
+                    for(var i = 0; i < _allItems.length; i++) {
+                        if(_allItems[i] != null)
+                            formattedItems.push(_allItems[i]);
+                    }
+
+                    _allItems = formattedItems;
+
+                    $log.info("All properly formatted items loaded: ", _allItems);
+
+                    $rootScope.$broadcast(EVENTS.all_items_loaded, _allItems);
+                });
+
+                return promises;
+            });
+
+            return promises;
+        }
 
         //returns a "lite" item list, includes expired items
         function getItemList() {
             var itemGuidsToFetch = [];
 
-            var _this = this;
             var deferred = $q.defer();
             syscoinAPIService.offerList().then(function(result) {
                 deferred.resolve(result.data);
             });
+
 
             return deferred.promise;
         }
 
         function getItem(guid) {
             var item;
-
             var deferred = $q.defer();
+
+            if(_categories == null)
+                _categories = [];
 
             syscoinAPIService.offerInfo(guid).then(function(response) {
                 $log.log('RESULT', response);
                 item = response.data;
-                item.description = JSON.parse(item.description);
-                item.category = JSON.parse(item.category);
 
-                $log.log('ITEM', item);
+                try {
+                    item.description = JSON.parse(item.description);
+                    item.category = JSON.parse(item.category);
 
-                $log.log("Item category: " + item.category[0]);
+                    //TODO refactor, encapsulate category fetching in a better way
+                    if(containsCategory(_categories, item.category[0]) === null) {
+                        $log.log("category added: " + item.category[0]);
+                        _categories.push(item.category[0]);
+                    }
 
-                //TODO refactor
-                if(containsCategory(_categories, item.category[0]) === null) {
-                    $log.log("category added: " + item.category[0]);
-                    _categories.push(item.category[0]);
+                    deferred.resolve(item);
+                }catch(e) {
+                    $log.warn("Description and category are not in JSON format!");
+
+                    //TODO: Core level change, see if we can include description in offerList so we can prune ahead
+                    //      of calling offerinfo on each item.
+                    removeItem(item.id, "WRONG FORMAT");
+                    deferred.resolve(null);
                 }
-
-                deferred.resolve(item);
+                $log.log('ITEM', item);
             });
 
             return deferred.promise;
+        }
+
+        function removeItem(itemGuid, reason) {
+            $log.info("removing item:" + itemGuid + " for " + reason);
+
+            //remove item from itemguids
+            for(var i = 0; i < _itemGuids.length; i++) {
+                if(_itemGuids[i] == itemGuid) {
+                    _itemGuids.splice(i, 1);
+                }
+            }
+
+            $log.info("total items:" + _itemGuids.length);
         }
 
         //formats an item description according to the official JSON offer spec
@@ -237,6 +256,10 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
          */
         function containsCategory(collection, category) {
             $log.log("Checking if category " + category + " exists in", collection);
+
+            if(collection == null)
+                return null;
+
             for(var i = 0; i < collection.length; i++) {
                 if(collection[i] == category)
                     return collection[i];
@@ -263,6 +286,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
             getItem: getItem,
             getFeaturedItems: getFeaturedItems,
             getCategories: getCategories,
+            getCachedCategories: getCachedCategories,
             getItemList: getItemList,
             addItem: addItem,
             updateItem: updateItem,

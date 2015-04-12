@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('allitems.controllers', ['blockmarket.services','blockmarket.marketconstants', 'ui.bootstrap'])
-    .controller('AllItemsCtrl', ['$rootScope', '$scope', '$q', 'blockmarketService', 'EVENTS', 'BANNED_ITEMS',
-        function ($rootScope, $scope, $q, blockmarketService, EVENTS, BANNED_ITEMS) {
+    .controller('AllItemsCtrl', ['$rootScope', '$scope', '$q', '$log', 'blockmarketService', 'EVENTS', 'BANNED_ITEMS',
+        function ($rootScope, $scope, $q, $log, blockmarketService, EVENTS, BANNED_ITEMS) {
         $rootScope.activeView = 'items'; //sets the style for nav
 
         blockmarketService.getAllItems();
@@ -15,7 +15,7 @@ angular.module('allitems.controllers', ['blockmarket.services','blockmarket.mark
             for(var i = 0; i < items.length; i ++) {
                 displayItem = true;
                 for(var j = 0; j < BANNED_ITEMS.length; j++) {
-                    if(items[i].id == BANNED_ITEMS[j]) {
+                    if(items[i] == null || items[i].id == BANNED_ITEMS[j]) {
                         displayItem = false;
                         break;
                     }
@@ -28,8 +28,10 @@ angular.module('allitems.controllers', ['blockmarket.services','blockmarket.mark
                 }
             }
 
+            $scope.categories = blockmarketService.getCachedCategories();
             $scope.items = displayableItems;
 
-            $scope.categories = blockmarketService.getCategories();
+            $log.log("Displayable items:",  $scope.items);
+            $log.log("categories :", $scope.categories);
         });
     }]);
