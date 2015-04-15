@@ -2,7 +2,7 @@
 
 angular.module('blockmarket.appconfig', [])
     .constant("APP_CONFIG", {
-            VERSION: "0.1b3"
+            VERSION: "0.1 beta4"
     })
     .constant("PGP_PUBLIC_KEY",
             "-----BEGIN PGP PUBLIC KEY BLOCK-----\n" +
