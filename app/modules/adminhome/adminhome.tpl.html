@@ -18,13 +18,15 @@
       <tr>
         <th>Title</th>
         <th>GUID</th>
+        <th>Quantity</th>
         <th>Expires In</th>
       </tr>
       </thead>
       <tbody>
       <tr ng-repeat="item in items | orderBy: 'expires_in' : reverse=true" ng-if="item.expires_in > 0">
-        <td ng-click="launchModal('editItem', item.name)">{{ item.value }}</td>
-        <td>{{ item.name }}</td>
+        <td ng-click="launchModal('editItem', item.name)">{{ item.title }}</td>
+        <td>{{ item.guid }}</td>
+        <td>{{ item.quantity }}</td>
         <td>{{ item.expires_in }}</td>
       </tr>
       </tbody>
@@ -37,14 +39,15 @@
         <tr>
           <th>Title</th>
           <th>GUID</th>
-          <th>Expires In</th>
+          <th>Quantity</th>
+          <th>Status</th>
         </tr>
         </thead>
         <tbody>
         <tr ng-repeat="item in items | orderBy: 'expires_in' : reverse=true" ng-if="item.pending">
-          <td>{{ item.value }}</td>
-          <td>{{ item.name }}</td>
-          <td>{{ item.pending }}</td>
+          <td>{{ item.title }}</td>
+          <td>{{ item.guid }}</td>
+          <td>{{ item.quantity }}</td>
           <td>Waiting for confirmations...</td>
         </tr>
         </tbody>
@@ -66,14 +69,17 @@
         <tr>
           <th>Title</th>
           <th>GUID</th>
-          <th>Expires In</th>
+          <th>Quantity</th>
+          <th>Expired Block</th>
+          <th>Status</th>
         </tr>
         </thead>
         <tbody>
         <tr ng-repeat="item in items | orderBy: 'expires_in' : reverse=true" ng-if="item.expires_in < 0 && item.pendingConfirmation === false">
-          <td>{{ item.value }}</td>
-          <td>{{ item.name }}</td>
-          <td>{{ item.expires_in }}</td>
+          <td>{{ item.title }}</td>
+          <td>{{ item.guid }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.expired_block }}</td>
           <td>EXPIRED</td>
         </tr>
         </tbody>

@@ -4,7 +4,7 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
     .service('blockmarketService', ['$http', '$timeout', '$q', 'FEATURED_ITEMS', 'syscoinAPIService', '$log', 'EVENTS', '$rootScope',
         function($http, $timeout, $q, FEATURED_ITEMS, syscoinAPIService, $log, EVENTS, $rootScope) {
 
-        var _categories = null;
+        var _categories = [];
         var _allItems = [];
         var _itemGuids = [];
 
@@ -53,14 +53,10 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
 
         function getCategories() {
             $log.log("GET CATEGORIES" + _categories.length);
-            if(_categories == null) {
+            if(_categories.length == 0) {
                 _categories = [];
                 $log.log("Something should be done to fetch the categories.");
-                var promises = this.getAllItems();
-
-                $q.all(promises).then(function(items) {
-                    $rootScope.$broadcast(EVENTS.all_categories_loaded, _categories);
-                });
+                this.getAllItems();
             }else{
                 return _categories;
             }
@@ -89,15 +85,28 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
 
             $log.info("GETALL:", this);
             var _this = this;
-            var promises = syscoinAPIService.offerList().then(function(offers) {
+            syscoinAPIService.offerList().then(function(offers) {
                 //iterate over offers and get the full data of non expired offers
                 for(var i = 0; i < offers.data.length; i++) {
                     //if the offer is not expired, add it to the queue to get full data on it
-                    if (offers.data[i].expired == 0 && offers.data[i].pending == 0) {
-                        $log.log("Adding item: ", offers.data[i]);
-                        _itemGuids.push(offers.data[i].name);
+                    var offer = offers.data[i];
+                    if (offer.expired == 0 && offer.pending == 0) {
+                        $log.log("Adding item: ", offer);
 
-                        itemGuidsToFetch.push(offers.data[i].name);
+                        if(offer.category[0] == "[") {
+                            var category = JSON.parse(offer.category);
+
+                            //TODO refactor, encapsulate category fetching in a better way
+                            if(containsCategory(_categories, category[0]) === null) {
+                                $log.log("category added: " + category[0]);
+                                _categories.push(category[0]);
+                            }
+
+                            _itemGuids.push(offer.guid);
+                            itemGuidsToFetch.push(offer.guid);
+                        }else{
+                            $log.warn("Not adding category, invalid format:" + offer.category);
+                        }
                     }
                 }
 
@@ -110,25 +119,25 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
 
                 $q.all(promises).then(function(items) {
                     _allItems = items;
+                    $log.log("Got all items complete:", _allItems);
                     var formattedItems = [];
 
                     //remove null items
                     for(var i = 0; i < _allItems.length; i++) {
-                        if(_allItems[i] != null)
+                        if(_allItems[i] != null) {
                             formattedItems.push(_allItems[i]);
+                            $log.log("ADDING properly formatted item: ", _allItems[i]);
+                        }
                     }
 
                     _allItems = formattedItems;
 
-                    $log.info("All properly formatted items loaded: ", _allItems);
+                    $log.log("All properly formatted items loaded: ", _allItems);
 
                     $rootScope.$broadcast(EVENTS.all_items_loaded, _allItems);
                 });
 
-                return promises;
             });
-
-            return promises;
         }
 
         //returns a "lite" item list, includes expired items
@@ -158,12 +167,6 @@ angular.module('blockmarket.services', ['blockmarket.appconfig', 'blockmarket.ma
                 try {
                     item.description = JSON.parse(item.description);
                     item.category = JSON.parse(item.category);
-
-                    //TODO refactor, encapsulate category fetching in a better way
-                    if(containsCategory(_categories, item.category[0]) === null) {
-                        $log.log("category added: " + item.category[0]);
-                        _categories.push(item.category[0]);
-                    }
 
                     deferred.resolve(item);
                 }catch(e) {

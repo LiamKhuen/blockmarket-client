@@ -22,18 +22,18 @@
     <div>
       <form novalidate class="simple-form">
 
-        <div class="form-group">
+        <div class="form-group sub">
           <label for="buyerEmail">Email (<a href="http://syscoin.market/#/pgp" target="_blank">encryption recommended</a>):</label>
           <input type="text" class="form-control" ng-model="purchase.buyerEmail" name="buyerEmail" ng-change="updateURI()">
         </div>
 
-        <div class="form-group" ng-if="item.description.deliveryMethod.toUpperCase() == 'PHYSICAL' || !item.description.deliveryMethod">
-          <label for="buyerAddress">Address (<a href="http://syscoin.market/#/pgp" target="_blank"encryption recommended</a>):</label>
+        <div class="form-group sub" ng-if="item.description.deliveryMethod.toUpperCase() == 'PHYSICAL' || !item.description.deliveryMethod">
+          <label for="buyerAddress">Address (<a href="http://syscoin.market/#/pgp" target="_blank">encryption recommended</a>):</label>
           <textarea ng-model="purchase.buyerAddress" class="form-control" name="buyerAddress" rows="3"  placeholder="Shipping Address" ng-change="updateURI()"></textarea>
         </div>
 
-        <div class="form-group">
-          <label for="buyerNote">Note (<a href="http://syscoin.market/#/pgp" target="_blank"encryption recommended</a>):</label>
+        <div class="form-group sub">
+          <label for="buyerNote">Note (<a href="http://syscoin.market/#/pgp" target="_blank">encryption recommended</a>):</label>
           <textarea ng-model="purchase.buyerNote" class="form-control" name="buyerNote" rows="3"  placeholder="Note to Seller" ng-change="updateURI()"></textarea>
         </div>
 

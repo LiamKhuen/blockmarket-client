@@ -46,6 +46,14 @@
     margin: 0;
 }
 
+.sub a:hover {
+    color: gray;
+}
+
+.sub a {
+    color: #bababa;
+}
+
 /* ================= */
 /*     Navigation    */
 /* ================= */
