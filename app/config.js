@@ -2,7 +2,9 @@
 
 angular.module('blockmarket.appconfig', [])
     .constant("APP_CONFIG", {
-            VERSION: "0.1 beta4"
+            VERSION: "0.1 beta4",
+            THEME: "cerulean", //preview and full template list here: https://bootswatch.com
+            COLOR: "#FC3A99",
     })
     .constant("PGP_PUBLIC_KEY",
             "-----BEGIN PGP PUBLIC KEY BLOCK-----\n" +

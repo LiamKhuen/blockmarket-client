@@ -30,6 +30,7 @@ var app = angular.module('blockmarket', [
 
     $rootScope.authenticated = $cookies.authenticated ? true : false;
     $rootScope.version = APP_CONFIG.VERSION;
+    $rootScope.theme = APP_CONFIG.THEME;
 
     syscoinAPIService.getAccountAddress("").then(function(response) {
         $log.log("Root address:", response.data);
