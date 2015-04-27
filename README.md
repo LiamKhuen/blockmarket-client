@@ -1,3 +1,4 @@
+###### Important Note: These instructions are beta and are intended to be used with the latest BETA release of the [Syscoin Wallet](https://github.com/syscoin/syscoin/releases)
 # Blockmarket Beta
 Blockmarket is a single wallet web UI implementation built on top of [Syscoin's decentralized marketplace API](https://github.com/syscoin/syscoin-api). Blockmarket is intended to be easy to setup but does require some technical knowledge of linux. *Blockmarket is still in beta, so the easy-setup process is still a work in progress as core development is still ongroing.* 
 
@@ -18,23 +19,28 @@ Blockmarket is a web UI for easily managing your own market on the Syscoin netwo
 
 *These instructions generally assume an Ununtu operating system*
 
-- 1. First you should get a web server setup (we recommend [Apache](https://www.digitalocean.com/community/tutorials/how-to-set-up-apache-virtual-hosts-on-ubuntu-14-04-lts), setup may vary based on environment). You will also want to install [NodeJS](https://nodejs.org/) for your environment.
-- Next you need to install the [Syscoin 1.5.2 beta4 wallet](https://github.com/syscoin/syscoin/releases/tag/1.5.2b4) for your environemnt. If you're running an ubuntu server you'll need to compile the daemon.
-- 2. With the wallet installed, make sure you follow the setup instructions for [Syscoin API](https://github.com/syscoin/syscoin-api) and then start the API server, you'll want to start it in something like a linux screen so that it continues to run after you log out:
-```
-root@server:syscoin-api# screen nodejs server.js
-```
-- 3. Once the API server is running, you'll want to clone the blockmarket repository into whatever the web root of your marketplace is:
-```
-root@server:www# git clone https://github.com/syscoin/blockmarket.git public_html
-```
-- 4. Now use nodeJS to install bower and run bower to install all the dependencies:
-```
-root@server:public_html# sudo npm install -g bower
-root@server:public_html# sudo bower install
-```
-You will be prompted for your password and then a number of packages will be installed in *node_modules* (within the usr/bin folder) and *bower_components* (within public_html).
-- 5. You will now have a copy of [angular-syscoin-api](https://github.com/syscoin/angular-syscoin-api) in *public_html/bower_components/angular-syscoin-api* you will need to make sure to follow the config/setup instructions in the [Angular Syscoin API](https://github.com/syscoin/angular-syscoin-api) repo before the blockmarket will work properly.
+1. First you should get a web server setup (we recommend [Apache](https://www.digitalocean.com/community/tutorials/how-to-set-up-apache-virtual-hosts-on-ubuntu-14-04-lts), setup may vary based on environment). You will also want to install [NodeJS](https://nodejs.org/) for your environment.
+ 
+2. Next you need to install the [Syscoin 1.5.2 beta4 wallet](https://github.com/syscoin/syscoin/releases/tag/1.5.2b4) for your environemnt. If you're running an ubuntu server you'll need to compile the daemon.
+ 
+3. With the wallet installed, make sure you follow the setup instructions for [Syscoin API](https://github.com/syscoin/syscoin-api) and then start the API server, you'll want to start it in something like a linux screen so that it continues to run after you log out:
+ ```
+ root@server:syscoin-api# screen nodejs server.js
+ ```
+ 
+4. Once the API server is running, you'll want to clone the blockmarket repository into whatever the web root of your marketplace is:
+ ```
+ root@server:www# git clone https://github.com/syscoin/blockmarket.git public_html
+ ```
+ 
+5. Now use nodeJS to install bower and run bower to install all the dependencies:
+ ```
+ root@server:public_html# sudo npm install -g bower
+ root@server:public_html# sudo bower install
+ ```
+ You will be prompted for your password and then a number of packages will be installed in *node_modules* (within the usr/bin folder) and *bower_components* (within public_html).
+ 
+6. You will now have a copy of [angular-syscoin-api](https://github.com/syscoin/angular-syscoin-api) in *public_html/bower_components/angular-syscoin-api* you will need to make sure to follow the config/setup instructions in the [Angular Syscoin API](https://github.com/syscoin/angular-syscoin-api) repo before the blockmarket will work properly.
 
 That's it! You're done with the basics, add some items via the admin interface (if you have enough tSYS) and you should start to see them pending confirmation.
 
