@@ -1,6 +1,6 @@
 ###### Important Note: These instructions are beta and are intended to be used with the latest BETA release of the [Syscoin Wallet](https://github.com/syscoin/syscoin/releases)
 # Blockmarket Beta
-Blockmarket is a single wallet web UI implementation built on top of [Syscoin's decentralized marketplace API](https://github.com/syscoin/syscoin-api). Blockmarket is intended to be easy to setup but does require some technical knowledge of linux. *Blockmarket is still in beta, so the easy-setup process is still a work in progress as core development is still ongroing.* 
+Blockmarket is a single wallet web UI implementation built on top of [Syscoin's decentralized marketplace and service API](https://github.com/syscoin/syscoin-api). Blockmarket is intended to be easy to setup but does require some technical knowledge of linux. *Blockmarket is still in beta, so the easy-setup process is still a work in progress as core development is still ongroing.* 
 
 This software is currently in beta and as such it requires to be run on Syscoin's test blockchain for the time being (aka: cakenet). Due to this limitation it can only be used for expirmentation and more in-depth merchant and buyer feedback which we encourage using GitHub issues. We're hoping by releasing this beta code we'll be able to make the final product more attractive to a larger audience and gain wider traction immediately.
 
