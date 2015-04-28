@@ -27,7 +27,8 @@ Blockmarket is a web UI for easily managing your own market on the Syscoin netwo
  ```
  root@server:syscoin-api# screen nodejs server.js
  ```
- 
+  **Make sure you edit config.js in Syscoin-API to change the default username and password for the admin section located at http://yourmarket/#/admin!**
+  
 4. Once the API server is running, you'll want to clone the blockmarket repository into whatever the web root of your marketplace is:
  ```
  root@server:www# git clone https://github.com/syscoin/blockmarket.git public_html
@@ -38,9 +39,15 @@ Blockmarket is a web UI for easily managing your own market on the Syscoin netwo
  root@server:public_html# sudo npm install -g bower
  root@server:public_html# sudo bower install
  ```
- You will be prompted for your password and then a number of packages will be installed in *node_modules* (within the usr/bin folder) and *bower_components* (within public_html).
+ You will be prompted for your password and then a number of packages will be installed in *node_modules* (within the usr/bin folder) and *bower_components* (within public_html). You may notice bower throw an error related to angular-syscoin-api, this is normal during the beta phase, simply dismiss it, we'll take care of this in the next step.
  
-6. You will now have a copy of [angular-syscoin-api](https://github.com/syscoin/angular-syscoin-api) in *public_html/bower_components/angular-syscoin-api* you will need to make sure to follow the config/setup instructions in the [Angular Syscoin API](https://github.com/syscoin/angular-syscoin-api) repo before the blockmarket will work properly.
+6. You now may have a copy of [angular-syscoin-api](https://github.com/syscoin/angular-syscoin-api) in *public_html/bower_components/angular-syscoin-api*. You will need to delete this if you have it, and clone the latest version of this directly into your repo (this is only needed during the beta phase:
+ ```
+ root@server:bower_components# rm -rf syscoin-angular-api
+ root@server:bower_compoennts# git clone https://github.com/syscoin/angular-syscoin-api.git
+ ```
+ 
+ You will need to make sure to follow the config/setup instructions in the [Angular Syscoin API](https://github.com/syscoin/angular-syscoin-api) repo before the blockmarket will work properly.
 
 That's it! You're done with the basics, add some items via the admin interface (if you have enough tSYS) and you should start to see them pending confirmation.
 
