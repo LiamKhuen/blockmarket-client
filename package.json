@@ -14,6 +14,7 @@
   },
   "homepage": "https://github.com/syscoin/blockmarket#readme",
   "devDependencies": {
+    "browser-sync": "^2.12.8",
     "clean-webpack-plugin": "^0.1.4",
     "deep-assign": "^2.0.0",
     "del": "^2.1.0",
@@ -21,7 +22,7 @@
     "es6-promise": "^3.0.2",
     "events": "^1.1.0",
     "fastclick": "^1.0.6",
-    "gulp": "^3.9.0",
+    "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-help": "^1.6.1",
     "gulp-sass": "^2.1.0",
@@ -55,9 +56,18 @@
     "webpack-dev-server": "^1.14.0"
   },
   "dependencies": {
+    "autoprefixer": "^6.3.6",
     "classnamer": "^3.1.2",
+    "del": "^2.2.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-help": "^1.6.1",
+    "gulp-sass": "^2.3.1",
+    "gulp-sequence": "^0.4.5",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-util": "^3.0.7",
     "history": "^2.0.0",
-    "typings": "^1.0.4"
+    "typings": "^1.0.4",
+    "vinyl-source-stream": "^1.1.0"
   },
   "scripts": {
     "tsd": "typings reinstall --clean --overwrite",

@@ -1,7 +1,5 @@
 {
   "ambientDependencies": {},
   "globalDependencies": {
-    "gulp-sass": "registry:dt/gulp-sass#0.0.0+20160316155526",
-    "node": "registry:dt/node#6.0.0+20160523031422"
   }
 }

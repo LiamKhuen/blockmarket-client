@@ -9,7 +9,8 @@ var config = {
     svgDir:         __dirname + '/app/svg',
     imagesDir:      __dirname + '/app/images',
     cssDir:         __dirname + '/app/css',               /* third party css */
-    indexFile:      __dirname + '/app/index.html'
+    indexFile:      __dirname + '/app/index.html',
+    vendorJs:       __dirname + '/bower_components/'
   },
   /* DESTINATION aka build output file information, "where should the build files go" */
   dest: {
@@ -21,19 +22,11 @@ var config = {
     cssDir:         __dirname + '/dist/css',
     jsDir:          __dirname + '/dist/js'
   },
-  tempDir:          __dirname + '/.tmp',                  /* where transpiled TS files are stored prior to merging */
+  tempDir:          __dirname + '/compiled',                  /* where transpiled TS files are stored prior to merging */
   webPack: {
     port: 12000                                 // Port for webpack dev server
   }
 };
 
-
-var fs = require('fs'),
-  deepAssign = require('deep-assign');
-
-if (fs.existsSync('./gulp.local.config.js')) {
-  var localConfig = require('./gulp.local.config.js');
-  deepAssign(config, localConfig);
-}
 
 module.exports = config;

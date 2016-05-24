@@ -1,5 +1,3 @@
-require('es6-promise').polyfill();
-
 'use strict';
 
 var gulp       = require('gulp-help')(require('gulp')),
@@ -9,13 +7,11 @@ var gulp       = require('gulp-help')(require('gulp')),
   sequence     = require('gulp-sequence'),
   gutil        = require('gulp-util'),
   sourcemaps   = require('gulp-sourcemaps'),
-  webpack      = require('webpack'),
-  deepAssign   = require('deep-assign'),
-  HtmlWebpackPlugin = require('html-webpack-plugin'),
-  WebpackDS    = require('webpack-dev-server'),
-  autoprefixer = require('gulp-autoprefixer');
+  autoprefixer = require('autoprefixer'),
+  ts           = require('gulp-typescript'),
+  concat = require('gulp-concat');
 
-var webpackConfig = require('./webpack.config.js');
+var browserSync = require('browser-sync').create();
 
 //config object for source inputs and desired output paths, makes it easier to change the locations of various assets
 //without having to actually modify the gulp tasks
@@ -26,7 +22,6 @@ gulp.task('sass', 'Compiles SCSS to CSS and copies to dist', function () {
   return gulp.src(config.src.sassFiles)
     .pipe(sourcemaps.init())
     .pipe(sass().on('error', sass.logError))
-    .pipe(autoprefixer()) // right now only appending "-webkit-*". Enhance in the future if needed.
     .pipe(sourcemaps.write("./"))
     .pipe(gulp.dest(config.dest.cssDir));
 });
@@ -50,79 +45,49 @@ gulp.task('copyAssets', 'Copies assets (fonts, icons, images, etc) from source f
     .pipe(gulp.dest(config.dest.cssDir));
 });
 
-gulp.task('webpack', 'Transpiles TS files to JS and then bundles the resulting JS to a single file in dist folder', [], function (done) {
-  var PRODUCTION_CONFIG_OVERRIDES = {
-    entry: {
-      app: [
-          config.src.tsRoot
-      ]
-    },
-    watch: false,
-    cache: false,
-    debug: false
-  };
-
-  var compiler = webpack(deepAssign({}, webpackConfig, PRODUCTION_CONFIG_OVERRIDES));
-  compiler
-    .run(function(err, stats) {
-      if(err) {
-        console.log('Webpack Error', err);
-      }
-      else {
-        console.log(stats.toString());
-      }
-      done();
-    });
+//HTML
+gulp.task('copyHtml', 'Copies HTML to dist folder', function() {
+  return gulp.src(config.src.sourceDir + '/**/*.html').pipe(gulp.dest(config.dest.outputDir));
 });
 
-gulp.task('dev-server', 'Runs webpack dev server', [], function () {
 
-  var pathToWebpackClient = config.webPack.proxyBaseUrl ? 'webpack-dev-server/client?' + config.webPack.proxyBaseUrl
-    : 'webpack-dev-server/client?http://localhost:' + config.webPack.port;
-  //
-  var WEBPACK_DEV_SERVER_CONFIG_OVERRIDES = {
-    entry: {
-      app: [
-        pathToWebpackClient,
-        config.src.tsRoot
-      ]
-    },
-    watch: true,
-    cache: true,
-    debug: true,
-    plugins: [
-      // this injects JS scripts that are processed by webpack into the HTML file we specify
-      new HtmlWebpackPlugin({
-        template: config.src.indexFile,
-        inject: 'body',
-        filename: 'index.html' // file where output will be written (dist/index.html in our case)
-      })
-    ]
-  };
+gulp.task('js-watch', ['bundleJs'], browserSync.reload);
+gulp.task('ts-watch', ['bundleTs'], browserSync.reload);
+gulp.task('html-watch', ['copyHtml'], browserSync.reload);
 
-  var compiler = webpack(deepAssign({}, webpackConfig, WEBPACK_DEV_SERVER_CONFIG_OVERRIDES));
-
-  new WebpackDS(compiler, {
-    publicPath: '/',
-    contentBase: 'dist/',
-    proxy: {/*
-      '/dl3-service*': {
-          target: config.webPack.apiBaseUrl,
-          secure: false
-      },
-      '/dlm-service*': {
-          target: config.webPack.apiBaseUrl,
-          secure: false
-      }
-    */}
-  }).listen(config.webPack.port, "0.0.0.0", function(err) {
-    if(err) throw new gutil.PluginError("webpack-dev-server", err);
-    // Server listening
-    gutil.log("[webpack-dev-server]", "http://localhost:" + config.webPack.port + "/");
-
-    // keep the server alive or continue?
-    // callback();
+gulp.task('dev-server', 'Runs browser sync dev server', ['bundleJs'], function () {
+  browserSync.init({
+    server: {
+      baseDir: config.dest.outputDir
+    }
   });
+
+  gulp.watch("**/*.js", ['js-watch']);
+  gulp.watch("**/*.ts", ['ts-watch']);
+  gulp.watch("**/*.html", ['html-watch']);
+});
+
+//BUNDLE JS
+gulp.task('bundleJs', function() {
+  return gulp.src(['bower_components/angular/angular.js', 'bower_components/angular-ui-router/release/angular-ui-router.js'])
+    .pipe(sourcemaps.init())
+    .pipe(concat('vendor.js'))
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest(config.dest.jsDir));
+});
+
+
+//TS
+gulp.task('bundleTs', function() {
+  var tsProject = ts.createProject('tsconfig.json');
+  var tsResult = tsProject.src()
+    .pipe(sourcemaps.init())
+    .pipe(ts(tsProject));
+
+  return tsResult.js
+    .pipe(concat('tsbundle.js'))
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest(config.dest.outputDir));
 });
 
 // Clean dir
@@ -136,10 +101,10 @@ gulp.task('cleanJs', 'Deletes bundled JS/sourcemap from dist, leaves other files
 
 //BUILD AND BUNDLE
 //deletes temp dir so cannot be used for incremental compilation
-gulp.task('dist', 'Builds code for production deployment (clean, webpack, sass, copyAssets)', sequence('clean', ['sass', 'copyAssets'], 'webpack'));
+gulp.task('dist', 'Builds code for production deployment (clean, sass, copyAssets)', sequence('clean', ['sass', 'copyAssets', 'bundleJs', 'bundleTs', 'copyHtml']));
 
 //does not deletes temp dir so cannot be used for incremental compilation
-gulp.task('dev', 'Builds code for development (clean, sass, copyAssets)', sequence('clean', ['sass', 'copyAssets']));
+gulp.task('dev', 'Builds code for development (clean, sass, copyAssets)', sequence('clean', ['sass', 'copyAssets', 'bundleJs', 'bundleTs', 'copyHtml']));
 
 //WATCH
 gulp.task('watch', 'Watches all assets NOT built by webpack, rebuilds on change', function () {
@@ -151,6 +116,8 @@ gulp.task('watch', 'Watches all assets NOT built by webpack, rebuilds on change'
     ['copyAssets']);
 
   gulp.watch('./**/*.scss', ['sass']);
+
+  gulp.watch('./**/*.ts', ['bundleTs']);
 });
 
 gulp.task('default', false, sequence('dev', ['watch', 'dev-server']));
